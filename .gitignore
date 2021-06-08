@@ -1,0 +1,6 @@
+*.pyc
+tmp
+dist
+otomo.egg-info
+build
+*.sqlite3

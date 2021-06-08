@@ -1,0 +1,63 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Created on Wed Mar 14 11:53:04 2018
+
+@author: Okada
+"""
+
+import sys
+import argparse
+import otomo.setup
+import otomo.conn_sample
+import otomo.conn_qreport
+import otomo.conn_regjob
+from otomo import __version__
+        
+def main():
+    prog = "otomo"
+    parser = argparse.ArgumentParser(prog = prog)
+    parser.add_argument("--version", action = "version", version = prog + "-" + __version__)
+    subparsers = parser.add_subparsers()
+
+    ##########
+    # setup 
+    setup_parser = subparsers.add_parser("setup", help = "Create SQLiteDB")
+    setup_parser.add_argument("--samples", metavar = "/path/to/samples.txt", help = "", type = str, required=True)
+    setup_parser.add_argument("--wdir", metavar = "/path/to/dir", help = "gcat_workflow working directory", type = str, required=True)
+    #setup_parser.add_argument("-o", "--owner", metavar = "username", help = "username", type = str, default = "aiokada")
+    setup_parser.set_defaults(func = otomo.setup.main)
+
+    ##########
+    # sample 
+    sample_parser = subparsers.add_parser("sample", help = "Set Job Status")
+    sample_parser.add_argument("--sample", metavar = "sample", help = "", type = str, required=True)
+    sample_parser.add_argument("--status", metavar = "RUN", help = "RUN/ERROR/STOP/SUCCESS/UPLOADED", type = str, required=True)
+    sample_parser.add_argument("-d", "--description", metavar = "", help = "description", type = str, default = "")
+    sample_parser.set_defaults(func = otomo.conn_sample.main)
+
+    ##########
+    # report 
+    qreport_parser = subparsers.add_parser("qreport", help = "View Report")
+    qreport_parser.add_argument("-f", "--failed", help = "display failed or abnoraml exit status job only.", action = 'store_true')
+    qreport_parser.add_argument("-b", "--begin", metavar = "[YYYYMMDDhhmm]", help = "The earliest createdAt time for jobs to be summarized, in the format [YYYYMMDDhhmm]", type = str, default = "")
+    qreport_parser.add_argument("--max", metavar = "20", help = "Maximum display count", type = int, default = 0)
+    qreport_parser.set_defaults(func = otomo.conn_qreport.main)
+
+    ##########
+    # insert into job results 
+    regjob_parser = subparsers.add_parser("regjob", help = "Insert Into Job Status")
+    regjob_parser.add_argument("--qacct", metavar = "/path/to/qacct.txt", help = "", type = str, required=True)
+    regjob_parser.set_defaults(func = otomo.conn_regjob.main)
+
+    argv = sys.argv[1:]
+    if len(argv) < 1:
+        argv = [""]
+        
+    args = parser.parse_args(argv)
+    
+    return args.func(args)
+    
+if __name__ == "__main__":
+    sys.exit(main())
