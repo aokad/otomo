@@ -23,7 +23,12 @@ python setup.py build install
 
 create SQLiteDB
 ```
-$ otomo setup --samples ${samples} --wdir ${gcat_workflow_work_dir}
+$ otomo setup --wdir ${gcat_workflow_work_dir}
+```
+
+add samples
+```
+$ otomo regsample --samples ${samples}
 ```
 
 ### 2) Running Job
