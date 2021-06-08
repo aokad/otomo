@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/aokad/otomo.svg?branch=master)](https://travis-ci.org/aokad/otomo)
+[![Build Status](https://api.travis-ci.com/aokad/otomo.svg?branch=master)](https://travis-ci.org/aokad/otomo)
 ![Python](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg)
 
 # otomo
