@@ -23,12 +23,12 @@ python setup.py build install
 
 create SQLiteDB
 ```
-$ otomo setup ${gcat_workflow_work_dir} ${samples}
+$ otomo setup --samples ${samples} --wdir ${gcat_workflow_work_dir}
 ```
 
 ### 2) Running Job
 
-Set Job Status
+Set Sample Status
 ```
 $ otomo sample ${sample} ${status} ${description}
 ```
@@ -38,15 +38,22 @@ $ otomo sample ${sample} ${status} ${description}
 
  - decsription [OPTION]
 
+Set Job Status
+```
+$ qacct -j "*" -o USER -d 1 > ./qacct.txt
+$ otomo regjob --qacct ./qacct.txt
+```
+
 ### 3) Job Report
 
 ```
 $ otomo qreport ${option}
 ```
 
--f: failure only
--b begin_time: jobs started after
-
+options
+ - -f: failure only
+ - -b begin_time: jobs started after
+ - --max NUMBER: limited display jobs
 
 ### 3) View Job Status
 
