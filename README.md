@@ -55,8 +55,6 @@ options
  - -b begin_time: jobs started after
  - --max NUMBER: limited display jobs
 
-### 3) View Job Status
-
 ## 4. License 
 
 See document [LICENSE](./LICENSE).
