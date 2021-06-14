@@ -42,13 +42,21 @@ def main():
     regsample_parser.set_defaults(func = otomo.regist_sample.main)
     
     ##########
-    # get analysis status 
+    # set analysis status 
     sample_parser = subparsers.add_parser("analysis", help = "Set Job Status")
     sample_parser.add_argument("--sample", metavar = "sample", help = "", type = str, required=True)
     sample_parser.add_argument("--status", metavar = "RUN", help = "RUN/ERROR/STOP/SUCCESS/UPLOADED", type = str, required=True)
     sample_parser.add_argument("-d", "--description", metavar = "", help = "description", type = str, default = "")
+    sample_parser.add_argument("-e", "--error", metavar = "", help = "error_text", type = str, default = "")
     sample_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
     sample_parser.set_defaults(func = otomo.analysis_status.main)
+
+    ##########
+    # run_count count up
+    countup_parser = subparsers.add_parser("countup", help = "count-up runner")
+    countup_parser.add_argument("--sample", metavar = "sample", help = "", type = str, required=True)
+    countup_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
+    countup_parser.set_defaults(func = otomo.analysis_status.countup)
 
     ##########
     # insert into job results 

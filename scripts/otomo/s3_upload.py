@@ -67,9 +67,9 @@ def main(args):
             if error_remove == "":
                 otomo.analysis_status.set_status_w_sample(sample, "finish")
             else:
-                otomo.analysis_status.set_status_w_sample(sample, "remove_failure", error_remove)
+                otomo.analysis_status.set_status_w_sample(sample, "remove_failure", error=error_remove)
         else:
-            otomo.analysis_status.set_status_w_sample(sample, "upload_failure", error_upload)
+            otomo.analysis_status.set_status_w_sample(sample, "upload_failure", error=error_upload)
 
 if __name__ == "__main__":
     pass

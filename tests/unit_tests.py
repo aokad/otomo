@@ -66,6 +66,11 @@ class OtomoTest(unittest.TestCase):
         self.assertEqual (ret_sample["success"], 3)
         self.assertEqual (ret_sample["analysis_failure"], 2)
 
+        # run_count
+        subprocess.check_call("otomo countup --sample SRP219151_SRR10015386", shell=True)
+        ret_count = otomo.analysis_status.get_run_count_w_sample("SRP219151_SRR10015386")
+        self.assertEqual (ret_count, 1)
+
         # reduction
         os.makedirs("%s/fastq/%s" % (output_dir, "SRP219151_SRR10015386"), exist_ok = True)
         os.makedirs("%s/star/%s" % (output_dir, "SRP219151_SRR10015386"), exist_ok = True)

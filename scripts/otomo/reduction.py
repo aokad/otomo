@@ -24,7 +24,7 @@ def main(args):
     for sample in samples:
         error_remove = __remove(sample, stages, wdir)
         if error_remove != "":
-            otomo.analysis_status.set_status_w_sample(sample, "reduction_failure", error_remove)
+            otomo.analysis_status.set_status_w_sample(sample, "reduction_failure", error=error_remove)
 
 if __name__ == "__main__":
     pass

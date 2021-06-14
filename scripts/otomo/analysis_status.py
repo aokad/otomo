@@ -34,24 +34,60 @@ def get_sample_count_g_status(conf_file=otomo.CONFIG.DEFAULT_CONF):
     con.close()
     return status
 
-def set_status_w_sample(sample, status, description = "", conf_file=otomo.CONFIG.DEFAULT_CONF):
+def set_status_w_sample(sample, status, description = "", error = "", conf_file=otomo.CONFIG.DEFAULT_CONF):
     conf = otomo.CONFIG.load_conf(conf_file)
     db = conf.get("db", "analysis_db")
 
     con = sqlite3.connect(db)
     cur = con.cursor()
-    cur.execute("update analysis set last_status=:status,status_describe=:descript where sample=:sample",
-        {"status": status, "descript": description, "sample": sample}
+    cur.execute("update analysis set last_status=:status,status_describe=:descript,error_describe=:error where sample=:sample",
+        {"status": status, "descript": description, "error": error, "sample": sample}
+    )
+
+    con.commit()
+    con.close()
+
+def get_run_count_w_sample(sample, conf_file=otomo.CONFIG.DEFAULT_CONF):
+    conf = otomo.CONFIG.load_conf(conf_file)
+    db = conf.get("db", "analysis_db")
+
+    con = sqlite3.connect(db)
+    cur = con.cursor()
+    cur.execute("select run_count from analysis where sample='%s'" % (sample))
+
+    count = 0
+    for f in cur.fetchall():
+        count = f[0]
+
+    con.close()
+    return count
+
+def countup(args):
+    conf = otomo.CONFIG.load_conf(args.conf)
+    db = conf.get("db", "analysis_db")
+    con = sqlite3.connect(db)
+    cur = con.cursor()
+    cur.execute("select run_count from analysis where sample='%s'" % (args.sample))
+
+    run_count = 0
+    for f in cur.fetchall():
+        run_count = f[0]
+    con.close()
+
+    con = sqlite3.connect(db)
+    cur = con.cursor()
+    cur.execute("update analysis set run_count=:count where sample=:sample",
+        {"count": run_count+1, "sample": args.sample}
     )
 
     con.commit()
     con.close()
 
 def main(args):
-    set_status_w_sample(args.sample, args.status, args.description)
+    set_status_w_sample(args.sample, args.status, description = args.description, error = args.error)
 
 if __name__ == "__main__":
     #select("DRP000425", "init")
-    set_status_w_sample("DRP000425_DRR001174", "run", "test")
+    set_status_w_sample("DRP000425_DRR001174", "run", description ="test")
     get_sample_w_status("run")
 

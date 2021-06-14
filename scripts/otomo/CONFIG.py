@@ -4,10 +4,12 @@ DB_NAME_JOB_DEFAULT = "qreport.sqlite3"
 
 ANALYSIS_COLUMUNS = [
     "sample text",
-    "runid integer",
+    "runid text",
     "study text",
     "last_status text",
-    "status_describe text"
+    "status_describe text",
+    "error_describe text",
+    "run_count integer",
 ]
 
 UPLOAD_COLUMUNS = [
