@@ -1,5 +1,5 @@
 *.pyc
-tmp
+temp
 dist
 otomo.egg-info
 build

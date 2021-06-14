@@ -1,12 +1,19 @@
-DB_NAME_SAMPLE_DEFAULT = "analysis_status.sqlite3"
+DB_NAME_SAMPLE_DEFAULT = "sample_analysis.sqlite3"
+DB_NAME_UPLOAD_DEFAULT = "sample_upload.sqlite3"
 DB_NAME_JOB_DEFAULT = "qreport.sqlite3"
 
-SAMPLE_COLUMUNS = [
+ANALYSIS_COLUMUNS = [
     "sample text",
     "runid integer",
     "study text",
     "last_status text",
     "status_describe text"
+]
+
+UPLOAD_COLUMUNS = [
+    "sample text",
+    "output text",
+    "uri text",
 ]
 
 JOB_COLMUNS = [
@@ -34,15 +41,27 @@ DEFAULT_CONF = os.path.expanduser('~/.otomo.conf')
 def setup_conf(wdir):
     f = open(DEFAULT_CONF, "w")
     f.write("""[db]
-sample_db = {wdir}/admin/sample.sqlite3
+analysis_db = {wdir}/admin/analysis.sqlite3
+upload_db = {wdir}/admin/upload.sqlite3
 job_db = {wdir}/admin/job.sqlite3
+
 [work]
 dir = {wdir}
-""".format(wdir = wdir))
+
+[notify]
+slack_url = 
+channel = #ecsub-notify-moogle
+label = NAME
+
+[upload]
+aws_option = 
+cp_option = 
+remove_dirs = fastq,star,expression,ir_count,iravnet,juncmut
+""".format(wdir = wdir.rstrip("/")))
     f.close()
 
-def load_conf():
+def load_conf(conf):
     import configparser
     parsed_conf = configparser.ConfigParser()
-    parsed_conf.read(DEFAULT_CONF)
+    parsed_conf.read(conf)
     return parsed_conf

@@ -2,10 +2,7 @@ import datetime
 import sqlite3
 import otomo.CONFIG
 
-def __exists(jobnumber, taskid):
-    conf = otomo.CONFIG.load_conf()
-    db = conf.get("db", "job_db")
-
+def __exists(jobnumber, taskid, db):
     con = sqlite3.connect(db)
     cur = con.cursor()
     cur.execute("select count(jobnumber) from job where jobnumber=:jobnumber and taskid=:taskid",
@@ -18,10 +15,7 @@ def __exists(jobnumber, taskid):
     con.close()
     return ret
 
-def __insert(item):
-    conf = otomo.CONFIG.load_conf()
-    db = conf.get("db", "job_db")
-
+def __insert(item, db):
     job = []
     for key in otomo.CONFIG.JOB_COLMUNS:
         job.append(item[key.split(" ")[0]])
@@ -32,8 +26,8 @@ def __insert(item):
     con.commit()
     con.close()
 
-def __insert_job(item):
-    if __exists(item["jobnumber"], item["taskid"]):
+def __insert_job(item, db):
+    if __exists(item["jobnumber"], item["taskid"], db):
         return
 
     submit = __text_to_date(item["qsub_time"])
@@ -66,7 +60,7 @@ def __insert_job(item):
     else:
         item["use_cpu_rate"] = "NA"
 
-    __insert(item)
+    __insert(item, db)
 
 def __qreport(qacct_path):
     return open(qacct_path).read().split("\n")
@@ -88,7 +82,10 @@ def __init_item():
 
     return dic
 
-def _main(qacct_path):
+def _main(qacct_path, conf_file=otomo.CONFIG.DEFAULT_CONF):
+    conf = otomo.CONFIG.load_conf(conf_file)
+    db = conf.get("db", "job_db")
+
     qreport = __qreport(qacct_path)
     item = __init_item()
 
@@ -152,14 +149,14 @@ def _main(qacct_path):
             continue
 
         if row.startswith("===") and item["jobnumber"] != "" and item["jobname"] != "QLOGIN":
-            __insert_job(item)
+            __insert_job(item, db)
             item = __init_item()
 
     if item["jobnumber"] != "" and item["jobname"] != "QLOGIN":
-        __insert_job(item)
+        __insert_job(item, db)
 
 def main(args):
-    _main(args.qacct)
+    _main(args.qacct, args.conf)
 
 if __name__ == "__main__":
     _main('./qacct.txt')

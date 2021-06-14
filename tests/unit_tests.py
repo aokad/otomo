@@ -11,8 +11,8 @@ import subprocess
 
 import os
 cur = os.path.dirname(__file__)
-samples1 = cur + "/samples1.txt"
-samples2 = cur + "/samples2.txt"
+samples1 = cur + "/samples1.json"
+samples2 = cur + "/samples2.json"
 output_dir = cur + "/../temp"
 qacct = cur + "/qacct.txt"
 
@@ -38,34 +38,66 @@ class OtomoTest(unittest.TestCase):
     def test_01_version(self):
         subprocess.check_call(['otomo', '--version'])
     
-    def test_02_setup(self):
+    def test_02_allinone(self):
+        #  setup
         subprocess.check_call(("otomo setup --wdir %s" % (output_dir)), shell=True)
         subprocess.check_call(("otomo regsample --samples %s" % (samples1)), shell=True)
         subprocess.check_call(("otomo regsample --samples %s" % (samples2)), shell=True)
         
-        import otomo.conn_sample
-        ret_sample = otomo.conn_sample.get_sample_w_status("init")
+        import otomo.conn_analysis
+        ret_sample = otomo.conn_analysis.get_sample_w_status("init")
         self.assertEqual (len(ret_sample), 120)
         
-    # sample        
-    def test_03_function(self):
-        import otomo.conn_sample
-        otomo.conn_sample.set_status_w_sample("SRP219151_SRR10015386", "run")
-        ret_sample = otomo.conn_sample.get_sample_w_status("run")
+        # set status
+        otomo.conn_analysis.set_status_w_sample("SRP219151_SRR10015386", "run")
+        ret_sample = otomo.conn_analysis.get_sample_w_status("run")
         self.assertEqual (ret_sample, ["SRP219151_SRR10015386"])
 
-    def test_03_command(self):
-        subprocess.check_call("otomo sample --sample SRP219151_SRR10015388 --status error", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015388 --status success", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015390 --status success", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015392 --status success", shell=True)
+        ret_sample = otomo.conn_analysis.get_sample_w_status("success")
+        self.assertEqual (ret_sample, ["SRP219151_SRR10015388","SRP219151_SRR10015390", "SRP219151_SRR10015392"])
 
-        import otomo.conn_sample
-        ret_sample = otomo.conn_sample.get_sample_w_status("error")
+        ret_sample = otomo.conn_analysis.get_sample_count_g_status()
+        self.assertEqual (ret_sample["init"], 116)
+        self.assertEqual (ret_sample["success"], 3)
+        self.assertEqual (ret_sample["run"], 1)
+
+        # upload
+        def __prep(key):
+            os.makedirs(os.path.dirname(("%s/%s" % (output_dir, key))), exist_ok = True)
+            fw = open("%s/%s" % (output_dir, key), "w")
+            fw.write(key)
+            fw.close()
+
+        import json
+        f = open(samples1)
+        samples = json.load(f)
+        f.close()
+        for key in samples["SRP219151_SRR10015388"]["upload"]:
+            __prep(key)
+        for key in samples["SRP219151_SRR10015390"]["upload"]:
+            if key == "expression/SRP219151_SRR10015390/SRP219151_SRR10015390.txt.gz":
+                continue
+            __prep(key)
+        for key in samples["SRP219151_SRR10015392"]["upload"]:
+            __prep(key)
+
+        os.makedirs("%s/fastq/%s" % (output_dir, "SRP219151_SRR10015388"), exist_ok = True)
+        os.makedirs("%s/fastq/%s" % (output_dir, "SRP219151_SRR10015390"), exist_ok = True)
+
+        subprocess.check_call("otomo upload", shell=True)
+
+        ret_sample = otomo.conn_analysis.get_sample_w_status("finish")
         self.assertEqual (ret_sample, ["SRP219151_SRR10015388"])
-        
-    # job
-    def test_04_regjob(self):
-        subprocess.check_call(("otomo regjob --qacct %s" % (qacct)), shell=True)
+        ret_sample = otomo.conn_analysis.get_sample_w_status("upload_failure")
+        self.assertEqual (ret_sample, ["SRP219151_SRR10015390"])
+        ret_sample = otomo.conn_analysis.get_sample_w_status("remove_failure")
+        self.assertEqual (ret_sample, ["SRP219151_SRR10015392"])
 
-    def test_05_qreport(self):
+        # job
+        subprocess.check_call(("otomo regjob --qacct %s" % (qacct)), shell=True)
         subprocess.check_call("otomo qreport --max 10 -f -b 202106050900", shell=True)
 
 def suite():

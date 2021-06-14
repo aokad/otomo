@@ -11,9 +11,12 @@ import sys
 import argparse
 import otomo.setup
 import otomo.conn_regsample
-import otomo.conn_sample
+import otomo.conn_analysis
 import otomo.conn_regjob
 import otomo.conn_qreport
+import otomo.conn_upload
+import otomo.notify_quota
+import otomo.CONFIG
 
 from otomo import __version__
         
@@ -27,26 +30,30 @@ def main():
     # setup 
     setup_parser = subparsers.add_parser("setup", help = "Create SQLiteDB")
     setup_parser.add_argument("--wdir", metavar = "/path/to/dir", help = "gcat_workflow working directory", type = str, required=True)
+    setup_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
     setup_parser.set_defaults(func = otomo.setup.main)
 
     ##########
     # insert into samples 
     regsample_parser = subparsers.add_parser("regsample", help = "Insert Into Samples")
-    regsample_parser.add_argument("--samples", metavar = "/path/to/samples.txt", help = "", type = str, required=True)
+    regsample_parser.add_argument("--samples", metavar = "/path/to/samples.json", help = "", type = str, required=True)
+    regsample_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
     regsample_parser.set_defaults(func = otomo.conn_regsample.main)
     
     ##########
-    # sample 
-    sample_parser = subparsers.add_parser("sample", help = "Set Job Status")
+    # get analysis status 
+    sample_parser = subparsers.add_parser("analysis", help = "Set Job Status")
     sample_parser.add_argument("--sample", metavar = "sample", help = "", type = str, required=True)
     sample_parser.add_argument("--status", metavar = "RUN", help = "RUN/ERROR/STOP/SUCCESS/UPLOADED", type = str, required=True)
     sample_parser.add_argument("-d", "--description", metavar = "", help = "description", type = str, default = "")
-    sample_parser.set_defaults(func = otomo.conn_sample.main)
+    sample_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
+    sample_parser.set_defaults(func = otomo.conn_analysis.main)
 
     ##########
     # insert into job results 
     regjob_parser = subparsers.add_parser("regjob", help = "Insert Into Job Status")
     regjob_parser.add_argument("--qacct", metavar = "/path/to/qacct.txt", help = "", type = str, required=True)
+    regjob_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
     regjob_parser.set_defaults(func = otomo.conn_regjob.main)
     
     ##########
@@ -55,7 +62,22 @@ def main():
     qreport_parser.add_argument("-f", "--failed", help = "display failed or abnoraml exit status job only.", action = 'store_true')
     qreport_parser.add_argument("-b", "--begin", metavar = "[YYYYMMDDhhmm]", help = "The earliest createdAt time for jobs to be summarized, in the format [YYYYMMDDhhmm]", type = str, default = "")
     qreport_parser.add_argument("--max", metavar = "20", help = "Maximum display count", type = int, default = 0)
+    qreport_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
     qreport_parser.set_defaults(func = otomo.conn_qreport.main)
+
+    ##########
+    # notify_quota 
+    quota_parser = subparsers.add_parser("notify_quota", help = "Notify Quota")
+    quota_parser.add_argument("--quota", metavar = "/path/to/quota.txt", help = "", type = str, required=True)
+    quota_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
+    quota_parser.set_defaults(func = otomo.notify_quota.main)
+
+    ##########
+    # upload 
+    upload_parser = subparsers.add_parser("upload", help = "Upload outputs to object storage")
+    upload_parser.add_argument("--max", metavar = "200", help = "Maximum upload samples", type = int, default = 1000)
+    upload_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
+    upload_parser.set_defaults(func = otomo.conn_upload.main)
 
     argv = sys.argv[1:]
     if len(argv) < 1:
