@@ -35,9 +35,18 @@ Create SQLiteDB
 $ otomo setup --wdir ${gcat_workflow_work_dir}
 ```
 
-vi config file
+vi config file (option)
 ```
 $ vi ~/.otomo.cfg
+
+[notify]
+slack_url = 
+channel = 
+label = 
+
+[upload]
+aws_option = 
+cp_option = 
 ```
 
 Add samples

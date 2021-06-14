@@ -44,22 +44,22 @@ class OtomoTest(unittest.TestCase):
         subprocess.check_call(("otomo regsample --samples %s" % (samples1)), shell=True)
         subprocess.check_call(("otomo regsample --samples %s" % (samples2)), shell=True)
         
-        import otomo.conn_analysis
-        ret_sample = otomo.conn_analysis.get_sample_w_status("init")
+        import otomo.analysis_status
+        ret_sample = otomo.analysis_status.get_sample_w_status("init")
         self.assertEqual (len(ret_sample), 120)
         
         # set status
-        otomo.conn_analysis.set_status_w_sample("SRP219151_SRR10015386", "run")
-        ret_sample = otomo.conn_analysis.get_sample_w_status("run")
+        otomo.analysis_status.set_status_w_sample("SRP219151_SRR10015386", "run")
+        ret_sample = otomo.analysis_status.get_sample_w_status("run")
         self.assertEqual (ret_sample, ["SRP219151_SRR10015386"])
 
         subprocess.check_call("otomo analysis --sample SRP219151_SRR10015388 --status success", shell=True)
         subprocess.check_call("otomo analysis --sample SRP219151_SRR10015390 --status success", shell=True)
         subprocess.check_call("otomo analysis --sample SRP219151_SRR10015392 --status success", shell=True)
-        ret_sample = otomo.conn_analysis.get_sample_w_status("success")
+        ret_sample = otomo.analysis_status.get_sample_w_status("success")
         self.assertEqual (ret_sample, ["SRP219151_SRR10015388","SRP219151_SRR10015390", "SRP219151_SRR10015392"])
 
-        ret_sample = otomo.conn_analysis.get_sample_count_g_status()
+        ret_sample = otomo.analysis_status.get_sample_count_g_status()
         self.assertEqual (ret_sample["init"], 116)
         self.assertEqual (ret_sample["success"], 3)
         self.assertEqual (ret_sample["run"], 1)
@@ -75,6 +75,14 @@ class OtomoTest(unittest.TestCase):
         f = open(samples1)
         samples = json.load(f)
         f.close()
+        
+        import glob
+        import shutil
+        for subdir in glob.glob(output_dir + "/*"):
+            if subdir.split("/")[-1] == "admin":
+                continue
+            shutil.rmtree(subdir)
+
         for key in samples["SRP219151_SRR10015388"]["upload"]:
             __prep(key)
         for key in samples["SRP219151_SRR10015390"]["upload"]:
@@ -89,11 +97,11 @@ class OtomoTest(unittest.TestCase):
 
         subprocess.check_call("otomo upload", shell=True)
 
-        ret_sample = otomo.conn_analysis.get_sample_w_status("finish")
+        ret_sample = otomo.analysis_status.get_sample_w_status("finish")
         self.assertEqual (ret_sample, ["SRP219151_SRR10015388"])
-        ret_sample = otomo.conn_analysis.get_sample_w_status("upload_failure")
+        ret_sample = otomo.analysis_status.get_sample_w_status("upload_failure")
         self.assertEqual (ret_sample, ["SRP219151_SRR10015390"])
-        ret_sample = otomo.conn_analysis.get_sample_w_status("remove_failure")
+        ret_sample = otomo.analysis_status.get_sample_w_status("remove_failure")
         self.assertEqual (ret_sample, ["SRP219151_SRR10015392"])
 
         # job

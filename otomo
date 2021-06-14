@@ -10,11 +10,11 @@ Created on Wed Mar 14 11:53:04 2018
 import sys
 import argparse
 import otomo.setup
-import otomo.conn_regsample
-import otomo.conn_analysis
-import otomo.conn_regjob
-import otomo.conn_qreport
-import otomo.conn_upload
+import otomo.regist_sample
+import otomo.analysis_status
+import otomo.regist_job
+import otomo.qreport
+import otomo.s3_upload
 import otomo.notify_quota
 import otomo.CONFIG
 
@@ -38,7 +38,7 @@ def main():
     regsample_parser = subparsers.add_parser("regsample", help = "Insert Into Samples")
     regsample_parser.add_argument("--samples", metavar = "/path/to/samples.json", help = "", type = str, required=True)
     regsample_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
-    regsample_parser.set_defaults(func = otomo.conn_regsample.main)
+    regsample_parser.set_defaults(func = otomo.regist_sample.main)
     
     ##########
     # get analysis status 
@@ -47,14 +47,14 @@ def main():
     sample_parser.add_argument("--status", metavar = "RUN", help = "RUN/ERROR/STOP/SUCCESS/UPLOADED", type = str, required=True)
     sample_parser.add_argument("-d", "--description", metavar = "", help = "description", type = str, default = "")
     sample_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
-    sample_parser.set_defaults(func = otomo.conn_analysis.main)
+    sample_parser.set_defaults(func = otomo.analysis_status.main)
 
     ##########
     # insert into job results 
     regjob_parser = subparsers.add_parser("regjob", help = "Insert Into Job Status")
     regjob_parser.add_argument("--qacct", metavar = "/path/to/qacct.txt", help = "", type = str, required=True)
     regjob_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
-    regjob_parser.set_defaults(func = otomo.conn_regjob.main)
+    regjob_parser.set_defaults(func = otomo.regist_job.main)
     
     ##########
     # report 
@@ -63,7 +63,7 @@ def main():
     qreport_parser.add_argument("-b", "--begin", metavar = "[YYYYMMDDhhmm]", help = "The earliest createdAt time for jobs to be summarized, in the format [YYYYMMDDhhmm]", type = str, default = "")
     qreport_parser.add_argument("--max", metavar = "20", help = "Maximum display count", type = int, default = 0)
     qreport_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
-    qreport_parser.set_defaults(func = otomo.conn_qreport.main)
+    qreport_parser.set_defaults(func = otomo.qreport.main)
 
     ##########
     # notify_quota 
@@ -77,7 +77,7 @@ def main():
     upload_parser = subparsers.add_parser("upload", help = "Upload outputs to object storage")
     upload_parser.add_argument("--max", metavar = "200", help = "Maximum upload samples", type = int, default = 1000)
     upload_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
-    upload_parser.set_defaults(func = otomo.conn_upload.main)
+    upload_parser.set_defaults(func = otomo.s3_upload.main)
 
     argv = sys.argv[1:]
     if len(argv) < 1:

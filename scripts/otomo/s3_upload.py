@@ -2,7 +2,7 @@ import shutil
 import sqlite3
 import boto3
 import otomo.CONFIG
-import otomo.conn_analysis
+import otomo.analysis_status
 
 def __path(db, sample):
     con = sqlite3.connect(db)
@@ -50,18 +50,18 @@ def main(args):
     stages = conf.get("upload", "remove_dirs").split(",")
     wdir = conf.get("work", "dir")
 
-    samples = otomo.conn_analysis.get_sample_w_status("success", args.max)
+    samples = otomo.analysis_status.get_sample_w_status("success", args.max)
     for sample in samples:
         pathes = __path(upload_db, sample)
         error_upload = __upload(wdir, pathes, aws_option, cp_option)
         if error_upload == "":
             error_remove = __remove(sample, stages, wdir)
             if error_remove == "":
-                otomo.conn_analysis.set_status_w_sample(sample, "finish")
+                otomo.analysis_status.set_status_w_sample(sample, "finish")
             else:
-                otomo.conn_analysis.set_status_w_sample(sample, "remove_failure", error_remove)
+                otomo.analysis_status.set_status_w_sample(sample, "remove_failure", error_remove)
         else:
-            otomo.conn_analysis.set_status_w_sample(sample, "upload_failure", error_upload)
+            otomo.analysis_status.set_status_w_sample(sample, "upload_failure", error_upload)
 
 if __name__ == "__main__":
     pass
