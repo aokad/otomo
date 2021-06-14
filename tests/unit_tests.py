@@ -50,9 +50,10 @@ class OtomoTest(unittest.TestCase):
         self.assertEqual (len(ret_sample), 120)
         
         # set status
-        otomo.analysis_status.set_status_w_sample("SRP219151_SRR10015386", "run")
-        ret_sample = otomo.analysis_status.get_sample_w_status("run")
-        self.assertEqual (ret_sample, ["SRP219151_SRR10015386"])
+        otomo.analysis_status.set_status_w_sample("SRP219151_SRR10015386", "analysis_failure")
+        otomo.analysis_status.set_status_w_sample("SRP219151_SRR10015394", "analysis_failure")
+        ret_sample = otomo.analysis_status.get_sample_w_status("analysis_failure")
+        self.assertEqual (ret_sample, ["SRP219151_SRR10015386", "SRP219151_SRR10015394"])
 
         subprocess.check_call("otomo analysis --sample SRP219151_SRR10015388 --status success", shell=True)
         subprocess.check_call("otomo analysis --sample SRP219151_SRR10015390 --status success", shell=True)
@@ -61,9 +62,23 @@ class OtomoTest(unittest.TestCase):
         self.assertEqual (ret_sample, ["SRP219151_SRR10015388","SRP219151_SRR10015390", "SRP219151_SRR10015392"])
 
         ret_sample = otomo.analysis_status.get_sample_count_g_status()
-        self.assertEqual (ret_sample["init"], 116)
+        self.assertEqual (ret_sample["init"], 115)
         self.assertEqual (ret_sample["success"], 3)
-        self.assertEqual (ret_sample["run"], 1)
+        self.assertEqual (ret_sample["analysis_failure"], 2)
+
+        # reduction
+        os.makedirs("%s/fastq/%s" % (output_dir, "SRP219151_SRR10015386"), exist_ok = True)
+        os.makedirs("%s/star/%s" % (output_dir, "SRP219151_SRR10015386"), exist_ok = True)
+        os.makedirs("%s/expression/%s" % (output_dir, "SRP219151_SRR10015386"), exist_ok = True)
+        os.makedirs("%s/ir_count/%s" % (output_dir, "SRP219151_SRR10015386"), exist_ok = True)
+        os.makedirs("%s/iravnet/%s" % (output_dir, "SRP219151_SRR10015386"), exist_ok = True)
+        os.makedirs("%s/juncmut/%s" % (output_dir, "SRP219151_SRR10015386"), exist_ok = True)
+        subprocess.check_call("otomo reduction", shell=True)
+
+        ret_sample = otomo.analysis_status.get_sample_w_status("analysis_failure")
+        self.assertEqual (ret_sample, ["SRP219151_SRR10015386"])
+        ret_sample = otomo.analysis_status.get_sample_w_status("reduction_failure")
+        self.assertEqual (ret_sample, ["SRP219151_SRR10015394"])
 
         # job
         subprocess.check_call(("otomo regjob --qacct %s" % (qacct)), shell=True)

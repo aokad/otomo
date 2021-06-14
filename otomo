@@ -15,6 +15,7 @@ import otomo.analysis_status
 import otomo.regist_job
 import otomo.qreport
 import otomo.s3_upload
+import otomo.reduction
 import otomo.notify_quota
 import otomo.CONFIG
 
@@ -78,6 +79,12 @@ def main():
     upload_parser.add_argument("--max", metavar = "200", help = "Maximum upload samples", type = int, default = 1000)
     upload_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
     upload_parser.set_defaults(func = otomo.s3_upload.main)
+
+    ##########
+    # remove failure samples 
+    reduction_parser = subparsers.add_parser("reduction", help = "remove failure samples")
+    reduction_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
+    reduction_parser.set_defaults(func = otomo.reduction.main)
 
     argv = sys.argv[1:]
     if len(argv) < 1:
