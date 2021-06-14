@@ -45,8 +45,8 @@ channel =
 label = 
 
 [upload]
-aws_option = 
-cp_option = 
+endpoint_url = 
+profile = 
 ```
 
 Add samples

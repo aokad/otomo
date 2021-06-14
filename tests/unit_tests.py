@@ -8,13 +8,15 @@ Created on Tue Jun 28 13:18:34 2016
 
 import unittest
 import subprocess
-
 import os
+import otomo.analysis_status
+
 cur = os.path.dirname(__file__)
 samples1 = cur + "/samples1.json"
 samples2 = cur + "/samples2.json"
 output_dir = cur + "/../temp"
 qacct = cur + "/qacct.txt"
+quota = cur + "/quota.txt"
 
 class OtomoTest(unittest.TestCase):
     # init class
@@ -38,13 +40,12 @@ class OtomoTest(unittest.TestCase):
     def test_01_version(self):
         subprocess.check_call(['otomo', '--version'])
     
-    def test_02_allinone(self):
+    def test_02_local(self):
         #  setup
         subprocess.check_call(("otomo setup --wdir %s" % (output_dir)), shell=True)
         subprocess.check_call(("otomo regsample --samples %s" % (samples1)), shell=True)
         subprocess.check_call(("otomo regsample --samples %s" % (samples2)), shell=True)
         
-        import otomo.analysis_status
         ret_sample = otomo.analysis_status.get_sample_w_status("init")
         self.assertEqual (len(ret_sample), 120)
         
@@ -63,6 +64,14 @@ class OtomoTest(unittest.TestCase):
         self.assertEqual (ret_sample["init"], 116)
         self.assertEqual (ret_sample["success"], 3)
         self.assertEqual (ret_sample["run"], 1)
+
+        # job
+        subprocess.check_call(("otomo regjob --qacct %s" % (qacct)), shell=True)
+        subprocess.check_call("otomo qreport --max 10 -f -b 202106050900", shell=True)
+
+    def test_02_upload(self):
+
+        self.test_02_local()
 
         # upload
         def __prep(key):
@@ -104,9 +113,8 @@ class OtomoTest(unittest.TestCase):
         ret_sample = otomo.analysis_status.get_sample_w_status("remove_failure")
         self.assertEqual (ret_sample, ["SRP219151_SRR10015392"])
 
-        # job
-        subprocess.check_call(("otomo regjob --qacct %s" % (qacct)), shell=True)
-        subprocess.check_call("otomo qreport --max 10 -f -b 202106050900", shell=True)
+    def test_03_notify(self):
+        subprocess.check_call(("otomo notify_quota --quota %s" % (quota)), shell=True)
 
 def suite():
     suite = unittest.TestSuite()

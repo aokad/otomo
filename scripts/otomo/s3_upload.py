@@ -16,14 +16,22 @@ def __path(db, sample):
     con.close()
     return pathes
 
-def __upload(wdir, pathes, aws_option, cp_option):
+def __upload(wdir, pathes, endpoint_url, profile):
+    if endpoint_url == "":
+        endpoint_url = None
+    if profile == "":
+        profile = None
+
     error = ""
     try:
+        session = boto3.session.Session(profile_name=profile)
+        client = session.client("s3", endpoint_url=endpoint_url)
+
         for path in pathes:
             path1 = path[1].replace("s3://", "")
             path1_bucket = path1.split("/")[0]
             path1_key = path1.replace(path1_bucket + "/", "", 1)
-            boto3.client("s3").upload_file("%s/%s" % (wdir, path[0]), path1_bucket, path1_key)
+            client.upload_file("%s/%s" % (wdir, path[0]), path1_bucket, path1_key)
         return error
 
     except Exception as e:
@@ -45,15 +53,15 @@ def main(args):
 
     conf = otomo.CONFIG.load_conf(args.conf)
     upload_db = conf.get("db", "upload_db")
-    aws_option = conf.get("upload", "aws_option")
-    cp_option = conf.get("upload", "cp_option")
+    endpoint_url = conf.get("upload", "endpoint_url")
+    profile = conf.get("upload", "profile")
     stages = conf.get("upload", "remove_dirs").split(",")
     wdir = conf.get("work", "dir")
 
     samples = otomo.analysis_status.get_sample_w_status("success", args.max)
     for sample in samples:
         pathes = __path(upload_db, sample)
-        error_upload = __upload(wdir, pathes, aws_option, cp_option)
+        error_upload = __upload(wdir, pathes, endpoint_url, profile)
         if error_upload == "":
             error_remove = __remove(sample, stages, wdir)
             if error_remove == "":

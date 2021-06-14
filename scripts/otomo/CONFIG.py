@@ -50,12 +50,12 @@ dir = {wdir}
 
 [notify]
 slack_url = 
-channel = #ecsub-notify-moogle
+channel = #channel
 label = NAME
 
 [upload]
-aws_option = 
-cp_option = 
+endpoint_url = 
+profile = 
 remove_dirs = fastq,star,expression,ir_count,iravnet,juncmut
 """.format(wdir = wdir.rstrip("/")))
     f.close()

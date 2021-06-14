@@ -11,7 +11,7 @@ matrix:
 
 script:
   - python setup.py build install
-  - python -m unittest tests.unit_tests
+  - python -m unittest tests.unit_tests.OtomoTest.test_02_local
 
 notifications:
   emails:
