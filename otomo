@@ -47,7 +47,8 @@ def main():
     sample_parser.add_argument("--sample", metavar = "sample", help = "", type = str, required=True)
     sample_parser.add_argument("--status", metavar = "RUN", help = "RUN/ERROR/STOP/SUCCESS/UPLOADED", type = str, required=True)
     sample_parser.add_argument("-d", "--description", metavar = "", help = "description", type = str, default = "")
-    sample_parser.add_argument("-e", "--error", metavar = "", help = "error_text", type = str, default = "")
+    sample_parser.add_argument("-e", "--error_message", metavar = "", help = "error_text", type = str, default = "")
+    sample_parser.add_argument("-s", "--stop_reason", metavar = "", help = "stop reason", type = str, default = "")
     sample_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
     sample_parser.set_defaults(func = otomo.analysis_status.main)
 
@@ -89,8 +90,8 @@ def main():
     upload_parser.set_defaults(func = otomo.s3_upload.main)
 
     ##########
-    # remove failure samples 
-    reduction_parser = subparsers.add_parser("reduction", help = "remove failure samples")
+    # remove temporary files of failure samples
+    reduction_parser = subparsers.add_parser("reduction", help = "Remove temporary files of failure samples")
     reduction_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
     reduction_parser.set_defaults(func = otomo.reduction.main)
 

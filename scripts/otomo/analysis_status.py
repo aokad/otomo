@@ -34,15 +34,28 @@ def get_sample_count_g_status(conf_file=otomo.CONFIG.DEFAULT_CONF):
     con.close()
     return status
 
-def set_status_w_sample(sample, status, description = "", error = "", conf_file=otomo.CONFIG.DEFAULT_CONF):
+def set_status_w_sample(sample, status, description = "", error = "", stop_reason = "", conf_file=otomo.CONFIG.DEFAULT_CONF):
     conf = otomo.CONFIG.load_conf(conf_file)
     db = conf.get("db", "analysis_db")
 
     con = sqlite3.connect(db)
     cur = con.cursor()
-    cur.execute("update analysis set last_status=:status,status_describe=:descript,error_describe=:error where sample=:sample",
-        {"status": status, "descript": description, "error": error, "sample": sample}
+    cur.execute("update analysis set last_status=:status where sample=:sample", 
+        {"status": status, "sample": sample}
     )
+
+    if description != "":
+        cur.execute("update analysis set status_describe=:descript where sample=:sample",
+            {"descript": description, "sample": sample}
+        )
+    if error != "":
+        cur.execute("update analysis set error_describe=:error where sample=:sample",
+            {"error": error, "sample": sample}
+        )
+    if stop_reason != "":
+        cur.execute("update analysis set stop_reason=:stop_reason where sample=:sample",
+            {"stop_reason": stop_reason, "sample": sample}
+        )
 
     con.commit()
     con.close()
@@ -84,7 +97,7 @@ def countup(args):
     con.close()
 
 def main(args):
-    set_status_w_sample(args.sample, args.status, description = args.description, error = args.error)
+    set_status_w_sample(args.sample, args.status, description = args.description, error = args.error_message, stop_reason = args.stop_reason)
 
 if __name__ == "__main__":
     #select("DRP000425", "init")

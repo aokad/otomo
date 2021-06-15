@@ -9,6 +9,7 @@ ANALYSIS_COLUMUNS = [
     "last_status text",
     "status_describe text",
     "error_describe text",
+    "stop_reason text",
     "run_count integer",
 ]
 
@@ -59,6 +60,7 @@ label = NAME
 endpoint_url = 
 profile = 
 remove_dirs = fastq,star,expression,ir_count,iravnet,juncmut
+
 """.format(wdir = wdir.rstrip("/")))
     f.close()
 

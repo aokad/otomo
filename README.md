@@ -77,13 +77,21 @@ $ cat ${samples.json}
 
 Set Sample Status
 ```
-$ otomo sample ${sample} ${status} ${description}
+$ otomo analysis --sample ${sample} --status ${status} \
+  --description ${description} \
+  --error_message ${error_message} \
+  --stop_reason ${stop_reason}
 ```
 
  - status ...
-    init/run/analysis_failure/stop/success/finish/upload_failure/remove_failure
+    init/run/success/failure/stop/finish/analysis_error/upload_error/remove_error
 
- - decsription [OPTION]
+<img src="./doc/capture.PNG>
+
+option
+ - decsription
+ - error_message
+ - stop_reason
 
 Set Job Status
 ```
@@ -91,8 +99,20 @@ $ qacct -j "*" -o USER -d 1 > ./qacct.txt
 $ otomo regjob --qacct ./qacct.txt
 ```
 
+Upload output files to object storage
+```
+$ otomo upload --max [1000]
+```
+
 ### 3) Job Report
 
+Add job info
+```
+$ qacct -j "*" -o OWNER -d 1 > ./qacct.txt
+$ otomo regjob --qacct ./aqcct.txt
+```
+
+View report
 ```
 $ otomo qreport ${option}
 ```
