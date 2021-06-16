@@ -1,4 +1,5 @@
 import sqlite3
+import datetime
 import otomo.CONFIG
 
 def get_sample_w_status(status, max = 0, conf_file=otomo.CONFIG.DEFAULT_CONF):
@@ -38,10 +39,11 @@ def set_status_w_sample(sample, status, description = "", error = "", stop_reaso
     conf = otomo.CONFIG.load_conf(conf_file)
     db = conf.get("db", "analysis_db")
 
+    now = otomo.CONFIG.date_to_text(datetime.datetime.now())
     con = sqlite3.connect(db)
     cur = con.cursor()
-    cur.execute("update analysis set last_status=:status where sample=:sample", 
-        {"status": status, "sample": sample}
+    cur.execute("update analysis set last_status=:status, last_update=:now where sample=:sample", 
+        {"status": status, "sample": sample, "now": now}
     )
 
     if description != "":

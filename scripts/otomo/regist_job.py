@@ -15,6 +15,9 @@ def __exists(jobnumber, taskid, db):
     con.close()
     return ret
 
+def __text_to_date(text):
+    return datetime.datetime.strptime(text, '%m/%d/%Y %H:%M:%S.%f')
+
 def __insert(item, db):
     job = []
     for key in otomo.CONFIG.JOB_COLMUNS:
@@ -36,9 +39,9 @@ def __insert_job(item, db):
     item["wait_time_h"] = "%.2f" % ((start-submit).total_seconds() / 3600)
     item["run_time_h"] = "%.2f" % ((end-start).total_seconds() / 3600)
 
-    item["qsub_time"] = __date_to_text(submit)
-    item["start_time"] = __date_to_text(start)
-    item["end_time"] = __date_to_text(end)
+    item["qsub_time"] = otomo.CONFIG.date_to_text(submit)
+    item["start_time"] = otomo.CONFIG.date_to_text(start)
+    item["end_time"] = otomo.CONFIG.date_to_text(end)
     
     if item["failed"] == "0" and item["exit_status"] == "0":
         item["failed"] = "0"
@@ -64,12 +67,6 @@ def __insert_job(item, db):
 
 def __qreport(qacct_path):
     return open(qacct_path).read().split("\n")
-
-def __text_to_date(text):
-    return datetime.datetime.strptime(text, '%m/%d/%Y %H:%M:%S.%f')
-
-def __date_to_text(dt):
-    return dt.strftime('%Y/%m/%d %H:%M:%S')
 
 def __init_item():
     dic = {}

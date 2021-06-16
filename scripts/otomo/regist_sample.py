@@ -1,6 +1,7 @@
 import sqlite3
-import otomo.CONFIG
 import json
+import datetime
+import otomo.CONFIG
 
 def __exists(sample, table, db):
     con = sqlite3.connect(db)
@@ -20,17 +21,18 @@ def insert_samples(samples_file, conf_file=otomo.CONFIG.DEFAULT_CONF):
     conf = otomo.CONFIG.load_conf(conf_file)
     db = conf.get("db", "analysis_db")
     
+    now = otomo.CONFIG.date_to_text(datetime.datetime.now())
     insert_list = []
     for key in data:
         if __exists(key, "analysis", db):
             continue
         study = data[key]["study"]
         runid = data[key]["runid"]
-        insert_list.append((key, runid, study, "init", "", "", "", 0))
+        insert_list.append((key, runid, study, "init", "", "", "", 0, now))
     
     con = sqlite3.connect(db)
     cur = con.cursor()
-    cur.executemany("insert into analysis values (?, ?, ?, ?, ?, ?, ?, ?)", insert_list)
+    cur.executemany("insert into analysis values (?, ?, ?, ?, ?, ?, ?, ?, ?)", insert_list)
     con.commit()
     con.close()
 

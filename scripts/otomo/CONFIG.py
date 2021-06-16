@@ -11,6 +11,7 @@ ANALYSIS_COLUMUNS = [
     "error_describe text",
     "stop_reason text",
     "run_count integer",
+    "last_update datetime",
 ]
 
 UPLOAD_COLUMUNS = [
@@ -69,3 +70,6 @@ def load_conf(conf):
     parsed_conf = configparser.ConfigParser()
     parsed_conf.read(conf)
     return parsed_conf
+
+def date_to_text(dt):
+    return dt.strftime('%Y/%m/%d %H:%M:%S')
