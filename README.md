@@ -86,7 +86,7 @@ $ otomo analysis --sample ${sample} --status ${status} \
  - status ...
     init/run/success/failure/stop/finish/analysis_error/upload_error/remove_error
 
-<img src="./doc/capture.PNG>
+<img src="./doc/status.PNG" />
 
 option
  - decsription
