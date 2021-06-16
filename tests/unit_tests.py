@@ -152,6 +152,22 @@ class OtomoTest(unittest.TestCase):
         ret_sample = otomo.analysis_status.get_sample_w_status("remove_error")
         self.assertEqual (ret_sample, ["SRP219151_SRR10015392", "SRP219151_SRR10015394"])
 
+    def test_02_duplicate(self):
+        #  setup
+        subprocess.check_call(("otomo setup --wdir %s" % (output_dir)), shell=True)
+        subprocess.check_call(("otomo regsample --samples %s" % (samples2)), shell=True)
+
+        otomo.analysis_status.set_status_w_sample("SRP212755_SRR10080437", "failure")
+        subprocess.check_call(("otomo regsample --samples %s" % (samples2)), shell=True)
+        ret_sample = otomo.analysis_status.get_sample_w_status("failure")
+        self.assertEqual (ret_sample, ["SRP212755_SRR10080437"])
+
+        # job
+        subprocess.check_call(("otomo regjob --qacct %s" % (qacct)), shell=True)
+        subprocess.check_call("otomo qreport --max 10 -f -b 202106050900", shell=True)
+        subprocess.check_call(("otomo regjob --qacct %s" % (qacct)), shell=True)
+        subprocess.check_call("otomo qreport --max 10 -f -b 202106050900", shell=True)
+
     def test_03_notify(self):
         subprocess.check_call(("otomo notify_quota --quota %s" % (quota)), shell=True)
 

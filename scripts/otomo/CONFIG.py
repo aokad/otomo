@@ -3,7 +3,7 @@ DB_NAME_UPLOAD_DEFAULT = "sample_upload.sqlite3"
 DB_NAME_JOB_DEFAULT = "qreport.sqlite3"
 
 ANALYSIS_COLUMUNS = [
-    "sample text",
+    "sample text primary key",
     "runid text",
     "study text",
     "last_status text",
@@ -15,7 +15,7 @@ ANALYSIS_COLUMUNS = [
 
 UPLOAD_COLUMUNS = [
     "sample text",
-    "output text",
+    "output text primary key",
     "uri text",
 ]
 

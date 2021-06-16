@@ -2,6 +2,17 @@ import sqlite3
 import otomo.CONFIG
 import json
 
+def __exists(sample, table, db):
+    con = sqlite3.connect(db)
+    cur = con.cursor()
+    cur.execute('select count(sample) from %s where sample="%s"' % (table, sample))
+    
+    ret = True
+    if cur.fetchall()[0][0] == 0:
+        ret = False
+    con.close()
+    return ret
+
 def insert_samples(samples_file, conf_file=otomo.CONFIG.DEFAULT_CONF):
     data = json.load(open(samples_file))
     
@@ -11,6 +22,8 @@ def insert_samples(samples_file, conf_file=otomo.CONFIG.DEFAULT_CONF):
     
     insert_list = []
     for key in data:
+        if __exists(key, "analysis", db):
+            continue
         study = data[key]["study"]
         runid = data[key]["runid"]
         insert_list.append((key, runid, study, "init", "", "", "", 0))
@@ -26,6 +39,8 @@ def insert_samples(samples_file, conf_file=otomo.CONFIG.DEFAULT_CONF):
     
     insert_list = []
     for key in data:
+        if __exists(key, "upload", db):
+            continue
         for output in data[key]["upload"]:
             insert_list.append((key, output, data[key]["upload"][output]))
     
@@ -35,7 +50,7 @@ def insert_samples(samples_file, conf_file=otomo.CONFIG.DEFAULT_CONF):
     con.commit()
     con.close()
     
-def main(args):    
+def main(args):
     insert_samples(args.samples, args.conf)
 
 if __name__ == "__main__":

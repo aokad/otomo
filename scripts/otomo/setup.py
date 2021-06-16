@@ -21,7 +21,7 @@ def create_db_qreport(db):
     con = sqlite3.connect(db)
     cur = con.cursor()
     cur.execute("DROP TABLE IF EXISTS job")
-    cur.execute("create table job (%s)" % (",".join(otomo.CONFIG.JOB_COLMUNS)))
+    cur.execute("create table job (%s, primary key(jobnumber, taskid))" % (",".join(otomo.CONFIG.JOB_COLMUNS)))
     con.commit()
     con.close()
 
