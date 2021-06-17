@@ -10,6 +10,7 @@ Created on Wed Mar 14 11:53:04 2018
 import sys
 import argparse
 import otomo.setup
+import otomo.view_table
 import otomo.regist_sample
 import otomo.analysis_status
 import otomo.regist_job
@@ -33,6 +34,14 @@ def main():
     setup_parser.add_argument("--wdir", metavar = "/path/to/dir", help = "gcat_workflow working directory", type = str, required=True)
     setup_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
     setup_parser.set_defaults(func = otomo.setup.main)
+
+    ##########
+    # view 
+    view_parser = subparsers.add_parser("view", help = "View Tables")
+    view_parser.add_argument("--table", choices=['analysis', 'upload', 'job'], help = "table name")
+    view_parser.add_argument("--option", metavar = "limit 10", help = "SQL option", type = str, default = "")
+    view_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
+    view_parser.set_defaults(func = otomo.view_table.main)
 
     ##########
     # insert into samples 

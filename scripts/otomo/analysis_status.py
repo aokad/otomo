@@ -88,11 +88,12 @@ def countup(args):
     for f in cur.fetchall():
         run_count = f[0]
     con.close()
-
+    
+    now = otomo.CONFIG.date_to_text(datetime.datetime.now())
     con = sqlite3.connect(db)
     cur = con.cursor()
-    cur.execute("update analysis set run_count=:count where sample=:sample",
-        {"count": run_count+1, "sample": args.sample}
+    cur.execute("update analysis set run_count=:count, last_update=:now where sample=:sample",
+        {"count": run_count+1, "sample": args.sample, "now": now}
     )
 
     con.commit()
@@ -102,7 +103,4 @@ def main(args):
     set_status_w_sample(args.sample, args.status, description = args.description, error = args.error_message, stop_reason = args.stop_reason)
 
 if __name__ == "__main__":
-    #select("DRP000425", "init")
-    set_status_w_sample("DRP000425_DRR001174", "run", description ="test")
-    get_sample_w_status("run")
-
+    pass

@@ -42,12 +42,12 @@ class OtomoTest(unittest.TestCase):
     
     def test_02_local(self):
         #  setup
-        subprocess.check_call(("otomo setup --wdir %s" % (output_dir)), shell=True)
-        subprocess.check_call(("otomo regsample --samples %s" % (samples1)), shell=True)
-        subprocess.check_call(("otomo regsample --samples %s" % (samples2)), shell=True)
+        subprocess.check_call("otomo setup --wdir %s" % (output_dir), shell=True)
+        subprocess.check_call("otomo regsample --samples %s" % (samples1), shell=True)
+        subprocess.check_call("otomo regsample --samples %s" % (samples2), shell=True)
         
         ret_sample = otomo.analysis_status.get_sample_w_status("init")
-        self.assertEqual (len(ret_sample), 120)
+        self.assertEqual (len(ret_sample), 20)
         
         # set status
         otomo.analysis_status.set_status_w_sample("SRP219151_SRR10015386", "failure")
@@ -63,7 +63,7 @@ class OtomoTest(unittest.TestCase):
         self.assertEqual (ret_sample, ["SRP219151_SRR10015388","SRP219151_SRR10015390", "SRP219151_SRR10015392"])
 
         ret_sample = otomo.analysis_status.get_sample_count_g_status()
-        self.assertEqual (ret_sample["init"], 114)
+        self.assertEqual (ret_sample["init"], 14)
         self.assertEqual (ret_sample["success"], 3)
         self.assertEqual (ret_sample["failure"], 3)
 
@@ -105,8 +105,13 @@ class OtomoTest(unittest.TestCase):
         self.assertEqual (ret_sample, ["SRP219151_SRR10015396"])
 
         # job
-        subprocess.check_call(("otomo regjob --qacct %s" % (qacct)), shell=True)
+        subprocess.check_call("otomo regjob --qacct %s" % (qacct), shell=True)
         subprocess.check_call("otomo qreport --max 10 -f -b 202106050900", shell=True)
+
+        # view table
+        subprocess.check_call('otomo view --table analysis', shell=True)
+        subprocess.check_call('otomo view --table upload --option "where sample=\'SRP219151_SRR10015386\'"', shell=True)
+        subprocess.check_call('otomo view --table job --option "limit 10"', shell=True)
 
     def test_02_upload(self):
 

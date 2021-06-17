@@ -12,7 +12,8 @@ python ./make_sampleinfo.py samples.txt s3://UPLOAD-BUCKET/subdir
 
 import sys
 SAMPLE = sys.argv[1]
-S3_PREFIX = sys.argv[2]
+#S3_PREFIX = sys.argv[2]
+S3_PREFIX = "s3://aokad-ana-tokyo/test"
 
 uploads = {}
 for sample in open(SAMPLE).read().split("\n"):

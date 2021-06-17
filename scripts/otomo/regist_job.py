@@ -136,7 +136,10 @@ def _main(qacct_path, conf_file=otomo.CONFIG.DEFAULT_CONF):
             item["cpu"] = row.split(" ")[-1]
             continue
         if row.startswith("submit_cmd"):
-            item["samples"] = row.split("/")[-2]
+            try:
+                item["samples"] = row.split("/")[-2]
+            except Exception:
+                pass
             for c in row.split(" "):
                 if c.startswith("mem_req="):
                     item["l_mem_g"] = c.split("=")[-1].replace("G", "")
