@@ -144,7 +144,7 @@ def _main(qacct_path, conf_file=otomo.CONFIG.DEFAULT_CONF):
             continue
         if row.startswith("submit_cmd"):
             try:
-                item["samples"] = row.split("/")[-2]
+                item["sample"] = row.split("/")[-2]
             except Exception:
                 pass
             for c in row.split(" "):

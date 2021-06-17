@@ -28,7 +28,7 @@ def insert_samples(samples_file, conf_file=otomo.CONFIG.DEFAULT_CONF):
             continue
         study = data[key]["study"]
         runid = data[key]["runid"]
-        insert_list.append((key, runid, study, "init", "", "", "", 0, now))
+        insert_list.append((key, study, runid, "init", now, 0, "", "", ""))
     
     con = sqlite3.connect(db)
     cur = con.cursor()
