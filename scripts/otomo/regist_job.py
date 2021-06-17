@@ -63,6 +63,13 @@ def __insert_job(item, db):
     else:
         item["use_cpu_rate"] = "NA"
 
+    try:
+        l_mem = float(item["l_mem_g"])
+        slots = float(item["l_slots"])
+        item["l_mem_g"] = "%.2f" % (l_mem * slots)
+    except Exception:
+        item["l_mem_g"] = item["l_mem_g"] + "*"
+    
     __insert(item, db)
 
 def __qreport(qacct_path):
