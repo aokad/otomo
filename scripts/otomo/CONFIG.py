@@ -1,26 +1,27 @@
-DB_NAME_SAMPLE_DEFAULT = "sample_analysis.sqlite3"
-DB_NAME_UPLOAD_DEFAULT = "sample_upload.sqlite3"
-DB_NAME_JOB_DEFAULT = "qreport.sqlite3"
-
-ANALYSIS_COLUMUNS = [
+ANALYSIS_COLUMNS = [
     "sample text primary key",
     "study text",
     "runid text",
     "status text",
+    "stage text",
     "last_update datetime",
-    "run_count integer",
-    "description text",
     "error_text text",
     "stop_reason text",
 ]
 
-UPLOAD_COLUMUNS = [
+UPLOAD_COLUMNS = [
     "sample text",
     "output text primary key",
     "uri text",
 ]
 
-JOB_COLMUNS = [
+SAMPLE_STAGE_COLUMNS = [
+    "sample text",
+    "stage text",
+    "start_time datetime",
+]
+
+JOB_COLUMNS = [
     "jobnumber integer",
     "taskid integer",
     "jobname text",
@@ -47,6 +48,7 @@ def setup_conf(wdir):
     f.write("""[db]
 analysis_db = {wdir}/admin/analysis.sqlite3
 upload_db = {wdir}/admin/upload.sqlite3
+sample_stage_db = {wdir}/admin/sample_stage.sqlite3
 job_db = {wdir}/admin/job.sqlite3
 request_dir = {wdir}/admin/request
 

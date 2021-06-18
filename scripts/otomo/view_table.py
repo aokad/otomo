@@ -1,5 +1,4 @@
 import sqlite3
-import datetime
 import otomo.CONFIG
 
 def view_analysis(args):
@@ -12,7 +11,7 @@ def view_analysis(args):
 
     data = []
     header = []
-    for h in otomo.CONFIG.ANALYSIS_COLUMUNS:
+    for h in otomo.CONFIG.ANALYSIS_COLUMNS:
         header.append(h.split(" ")[0])
     data.append("\t".join(header))
 
@@ -35,7 +34,30 @@ def view_upload(args):
 
     data = []
     header = []
-    for h in otomo.CONFIG.UPLOAD_COLUMUNS:
+    for h in otomo.CONFIG.UPLOAD_COLUMNS:
+        header.append(h.split(" ")[0])
+    data.append("\t".join(header))
+
+    for row in cur.fetchall():
+        text = []
+        for i in row:
+            text.append(str(i))
+        data.append("\t".join(text))
+
+    con.close()
+    print("\n".join(data))
+
+def view_sample_stage(args):
+    conf = otomo.CONFIG.load_conf(args.conf)
+    db = conf.get("db", "sample_stage_db")
+
+    con = sqlite3.connect(db)
+    cur = con.cursor()
+    cur.execute("select * from sample_stage %s" % args.option)
+
+    data = []
+    header = []
+    for h in otomo.CONFIG.SAMPLE_STAGE_COLUMNS:
         header.append(h.split(" ")[0])
     data.append("\t".join(header))
 
@@ -58,7 +80,7 @@ def view_job(args):
 
     data = []
     header = []
-    for h in otomo.CONFIG.JOB_COLMUNS:
+    for h in otomo.CONFIG.JOB_COLUMNS:
         header.append(h.split(" ")[0])
     data.append("\t".join(header))
 
@@ -77,6 +99,9 @@ def main(args):
 
     elif args.table == "upload":
         view_upload(args)
+
+    elif args.table == "sample_stage":
+        view_sample_stage(args)
 
     elif args.table == "job":
         view_job(args)

@@ -20,7 +20,7 @@ def __text_to_date(text):
 
 def __insert(item, db):
     job = []
-    for key in otomo.CONFIG.JOB_COLMUNS:
+    for key in otomo.CONFIG.JOB_COLUMNS:
         job.append(item[key.split(" ")[0]])
 
     con = sqlite3.connect(db)
@@ -77,7 +77,7 @@ def __qreport(qacct_path):
 
 def __init_item():
     dic = {}
-    for key in otomo.CONFIG.JOB_COLMUNS:
+    for key in otomo.CONFIG.JOB_COLUMNS:
         dic[key.split(" ")[0]] = ""
 
     dic["cpu"] = ""

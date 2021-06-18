@@ -28,11 +28,11 @@ def insert_samples(samples_file, conf_file=otomo.CONFIG.DEFAULT_CONF):
             continue
         study = data[key]["study"]
         runid = data[key]["runid"]
-        insert_list.append((key, study, runid, "init", now, 0, "", "", ""))
+        insert_list.append((key, study, runid, "init", "", now, "", ""))
     
     con = sqlite3.connect(db)
     cur = con.cursor()
-    cur.executemany("insert into analysis values (?, ?, ?, ?, ?, ?, ?, ?, ?)", insert_list)
+    cur.executemany("insert into analysis values (?, ?, ?, ?, ?, ?, ?, ?)", insert_list)
     con.commit()
     con.close()
 

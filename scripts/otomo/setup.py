@@ -1,27 +1,35 @@
 import sqlite3
 import otomo.CONFIG
 
-def create_db_sample_analysis(db):
+def create_db_analysis(db):
     con = sqlite3.connect(db)
     cur = con.cursor()
     cur.execute("DROP TABLE IF EXISTS analysis")
-    cur.execute("create table analysis (%s)" % (",".join(otomo.CONFIG.ANALYSIS_COLUMUNS)))
+    cur.execute("create table analysis (%s)" % (",".join(otomo.CONFIG.ANALYSIS_COLUMNS)))
     con.commit()
     con.close()
 
-def create_db_sample_upload(db):
+def create_db_upload(db):
     con = sqlite3.connect(db)
     cur = con.cursor()
     cur.execute("DROP TABLE IF EXISTS upload")
-    cur.execute("create table upload (%s)" % (",".join(otomo.CONFIG.UPLOAD_COLUMUNS)))
+    cur.execute("create table upload (%s)" % (",".join(otomo.CONFIG.UPLOAD_COLUMNS)))
+    con.commit()
+    con.close()
+
+def create_db_sample_stage(db):
+    con = sqlite3.connect(db)
+    cur = con.cursor()
+    cur.execute("DROP TABLE IF EXISTS sample_stage")
+    cur.execute("create table sample_stage (%s)" % (",".join(otomo.CONFIG.SAMPLE_STAGE_COLUMNS)))
     con.commit()
     con.close()
     
-def create_db_qreport(db):
+def create_db_job(db):
     con = sqlite3.connect(db)
     cur = con.cursor()
     cur.execute("DROP TABLE IF EXISTS job")
-    cur.execute("create table job (%s, primary key(jobnumber, taskid))" % (",".join(otomo.CONFIG.JOB_COLMUNS)))
+    cur.execute("create table job (%s, primary key(jobnumber, taskid))" % (",".join(otomo.CONFIG.JOB_COLUMNS)))
     con.commit()
     con.close()
 
@@ -35,17 +43,20 @@ def main(args):
     conf = otomo.CONFIG.load_conf(args.conf)
     db_analysis = conf.get("db", "analysis_db")
     db_upload = conf.get("db", "upload_db")
+    db_sample_stage = conf.get("db", "sample_stage_db")
     db_job = conf.get("db", "job_db")
     request_dir = conf.get("db", "request_dir")
 
     os.makedirs(os.path.dirname(db_analysis), exist_ok = True)
     os.makedirs(os.path.dirname(db_upload), exist_ok = True)
+    os.makedirs(os.path.dirname(db_sample_stage), exist_ok = True)
     os.makedirs(os.path.dirname(db_job), exist_ok = True)
-    os.makedirs(os.path.dirname(request_dir), exist_ok = True)
+    os.makedirs(request_dir, exist_ok = True)
 
-    create_db_sample_analysis(db_analysis)
-    create_db_sample_upload(db_upload)
-    create_db_qreport(db_job)
+    create_db_analysis(db_analysis)
+    create_db_upload(db_upload)
+    create_db_sample_stage(db_sample_stage)
+    create_db_job(db_job)
     
 if __name__ == "__main__":
     pass

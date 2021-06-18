@@ -40,7 +40,7 @@ def select(b_time = "", fail = False, max = 0, conf=otomo.CONFIG.DEFAULT_CONF):
 def main(args):
     data = __select(args.begin, args.failed, args.max, args.conf)
     header = []
-    for h in otomo.CONFIG.JOB_COLMUNS:
+    for h in otomo.CONFIG.JOB_COLUMNS:
         header.append(h.split(" ")[0])
     print ("\t".join(header))
     for row in data:

@@ -14,7 +14,7 @@ import otomo.analysis_status
 cur = os.path.dirname(__file__)
 samples1 = cur + "/samples1.json"
 samples2 = cur + "/samples2.json"
-output_dir = cur + "/../temp"
+output_dir = os.path.dirname(cur) + "/temp"
 qacct = cur + "/qacct.txt"
 quota = cur + "/quota.txt"
 
@@ -50,32 +50,71 @@ class OtomoTest(unittest.TestCase):
         self.assertEqual (len(ret_sample), 20)
         
         # set status
+        otomo.analysis_status.set_status_request("SRP219151_SRR10015386", "run", stage="fastq")
+        otomo.analysis_status.set_status_request("SRP219151_SRR10015386", "run", stage="star")
         otomo.analysis_status.set_status_request("SRP219151_SRR10015386", "failure")
+
+        otomo.analysis_status.set_status_request("SRP219151_SRR10015396", "run", stage="fastq")
+        otomo.analysis_status.set_status_request("SRP219151_SRR10015396", "run", stage="star")
+        otomo.analysis_status.set_status_request("SRP219151_SRR10015396", "run", stage="expression")
+        otomo.analysis_status.set_status_request("SRP219151_SRR10015396", "failure")
+
+        otomo.analysis_status.set_status_request("SRP219151_SRR10015394", "run", stage="fastq")
+        otomo.analysis_status.set_status_request("SRP219151_SRR10015394", "run", stage="star")
+        otomo.analysis_status.set_status_request("SRP219151_SRR10015394", "run", stage="expression")
+        otomo.analysis_status.set_status_request("SRP219151_SRR10015394", "run", stage="ir_count")
         otomo.analysis_status.set_status_request("SRP219151_SRR10015394", "failure")
-        otomo.analysis_status.set_status_request("SRP219151_SRR10015396", "failure", description =  "nouse")
-        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015388 --status success --description test1", shell=True)
-        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015390 --status success --description test2", shell=True)
-        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015392 --status success --description test3", shell=True)
-        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015398 --status run --countup", shell=True)
+
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015388 --status run --stage fastq", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015388 --status run --stage star", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015388 --status run --stage expression", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015388 --status run --stage ir_count", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015388 --status run --stage iravnet", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015388 --status run --stage juncmut", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015388 --status success", shell=True)
+
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015390 --status run --stage fastq", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015390 --status run --stage star", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015390 --status run --stage expression", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015390 --status run --stage ir_count", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015390 --status run --stage iravnet", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015390 --status run --stage juncmut", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015390 --status success", shell=True)
+
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015392 --status run --stage fastq", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015392 --status run --stage star", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015392 --status run --stage expression", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015392 --status run --stage ir_count", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015392 --status run --stage iravnet", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015392 --status run --stage juncmut", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015392 --status success", shell=True)
+
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015398 --status run --stage fastq", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015400 --status run --stage fastq", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015400 --status run --stage star", shell=True)
+        subprocess.check_call("otomo analysis --sample SRP219151_SRR10015398 --status run --stage fastq", shell=True)
         subprocess.check_call("otomo analysis --commit", shell=True)
 
         ret_sample = otomo.analysis_status.get_sample_w_status("failure")
         self.assertEqual (ret_sample, ["SRP219151_SRR10015386","SRP219151_SRR10015394", "SRP219151_SRR10015396"])
 
-        ret_sample = otomo.analysis_status.get_sample_w_status("success", where={"sql": "description=:desc", "value": {"desc": "test1"}})
-        self.assertEqual (ret_sample, ["SRP219151_SRR10015388"])
-
-        ret_sample = otomo.analysis_status.get_sample_w_status("success", where={"sql": "description=:desc1 or description=:desc2", "value": {"desc1": "test2", "desc2": "test3"}})
-        self.assertEqual (ret_sample, ["SRP219151_SRR10015390", "SRP219151_SRR10015392"])
+        ret_sample = otomo.analysis_status.get_sample_w_status("success")
+        self.assertEqual (ret_sample, ["SRP219151_SRR10015388", "SRP219151_SRR10015390", "SRP219151_SRR10015392"])
 
         ret_count = otomo.analysis_status.get_run_count_w_sample("SRP219151_SRR10015398")
-        self.assertEqual (ret_count, 1)
+        self.assertEqual (ret_count, {'fastq': 2})
 
-        ret_sample = otomo.analysis_status.get_sample_count_g_status(where={"sql": "description!=:desc", "value": {"desc": "nouse"}})
-        self.assertEqual (ret_sample["init"], 13)
-        self.assertEqual (ret_sample["run"], 1)
-        self.assertEqual (ret_sample["success"], 3)
-        self.assertEqual (ret_sample["failure"], 2)
+        ret_count = otomo.analysis_status.get_run_count_w_sample("SRP219151_SRR10015400")
+        self.assertEqual (ret_count, {'fastq': 1, 'star': 1})
+
+        ret_sample = otomo.analysis_status.get_sample_count_groupby_status_stage()
+        self.assertEqual (ret_sample["init"][""], 12)
+        self.assertEqual (ret_sample["run"]["fastq"], 1)
+        self.assertEqual (ret_sample["run"]["star"], 1)
+        self.assertEqual (ret_sample["success"]["juncmut"], 3)
+        self.assertEqual (ret_sample["failure"]["star"], 1)
+        self.assertEqual (ret_sample["failure"]["ir_count"], 1)
+        self.assertEqual (ret_sample["failure"]["expression"], 1)
 
         # reduction
         os.makedirs("%s/fastq/%s" % (output_dir, "SRP219151_SRR10015386"), exist_ok = True)
@@ -116,6 +155,7 @@ class OtomoTest(unittest.TestCase):
         # view table
         subprocess.check_call('otomo view --table analysis', shell=True)
         subprocess.check_call('otomo view --table upload --option "where sample=\'SRP219151_SRR10015386\'"', shell=True)
+        subprocess.check_call('otomo view --table sample_stage', shell=True)
         subprocess.check_call('otomo view --table job --option "limit 10"', shell=True)
 
     def test_02_upload(self):
@@ -183,9 +223,10 @@ class OtomoTest(unittest.TestCase):
         #  setup
         subprocess.check_call("otomo setup --wdir %s" % (output_dir), shell=True)
         subprocess.check_call("otomo regsample --samples %s" % (samples2), shell=True)
-        subprocess.check_call("cat %s | parallel -a - --jobs 20 otomo analysis --status run --countup --sample 2>&1" % (samples2.replace(".json", ".txt")), shell=True)
+        subprocess.check_call("cat %s | parallel -a - --jobs 20 otomo analysis --status run --stage fastq --sample 2>&1" % (samples2.replace(".json", ".txt")), shell=True)
         subprocess.check_call("otomo analysis --commit", shell=True)
         subprocess.check_call("otomo view --table analysis", shell=True)
+        subprocess.check_call("otomo view --table sample_stage", shell=True)
 
     def test_03_notify(self):
         subprocess.check_call("otomo notify_quota --quota %s" % (quota), shell=True)
