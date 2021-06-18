@@ -70,15 +70,16 @@ def main(args):
     for sample in samples:
         stop_reason = __stop(sample, wdir)
         if stop_reason != "":
-            otomo.analysis_status.set_status_w_sample(sample, "stop", stop_reason=stop_reason)
+            otomo.analysis_status.set_status_request(sample, "stop", stop_reason=stop_reason)
 
         error_remove = __remove(sample, stages, wdir)
         if error_remove != "":
-            otomo.analysis_status.set_status_w_sample(sample, "remove_error", error=error_remove)
+            otomo.analysis_status.set_status_request(sample, "remove_error", error_text=error_remove)
 
         if stop_reason == "" and error_remove == "":
-            otomo.analysis_status.set_status_w_sample(sample, "analysis_error")
+            otomo.analysis_status.set_status_request(sample, "analysis_error")
 
+    otomo.analysis_status.set_status_commit()
 if __name__ == "__main__":
     pass
 

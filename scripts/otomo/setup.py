@@ -36,11 +36,13 @@ def main(args):
     db_analysis = conf.get("db", "analysis_db")
     db_upload = conf.get("db", "upload_db")
     db_job = conf.get("db", "job_db")
-    
+    request_dir = conf.get("db", "request_dir")
+
     os.makedirs(os.path.dirname(db_analysis), exist_ok = True)
     os.makedirs(os.path.dirname(db_upload), exist_ok = True)
     os.makedirs(os.path.dirname(db_job), exist_ok = True)
-    
+    os.makedirs(os.path.dirname(request_dir), exist_ok = True)
+
     create_db_sample_analysis(db_analysis)
     create_db_sample_upload(db_upload)
     create_db_qreport(db_job)

@@ -58,18 +58,20 @@ def main(args):
     stages = conf.get("upload", "remove_dirs").split(",")
     wdir = conf.get("work", "dir")
 
-    samples = otomo.analysis_status.get_sample_w_status("success", args.max)
+    samples = otomo.analysis_status.get_sample_w_status("success", limit=args.max)
     for sample in samples:
         pathes = __path(upload_db, sample)
         error_upload = __upload(wdir, pathes, endpoint_url, profile)
         if error_upload == "":
             error_remove = __remove(sample, stages, wdir)
             if error_remove == "":
-                otomo.analysis_status.set_status_w_sample(sample, "finish")
+                otomo.analysis_status.set_status_request(sample, "finish")
             else:
-                otomo.analysis_status.set_status_w_sample(sample, "remove_error", error=error_remove)
+                otomo.analysis_status.set_status_request(sample, "remove_error", error_text=error_remove)
         else:
-            otomo.analysis_status.set_status_w_sample(sample, "upload_error", error=error_upload)
+            otomo.analysis_status.set_status_request(sample, "upload_error", error_text=error_upload)
+
+    otomo.analysis_status.set_status_commit()
 
 if __name__ == "__main__":
     pass

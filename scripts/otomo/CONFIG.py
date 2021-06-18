@@ -6,11 +6,11 @@ ANALYSIS_COLUMUNS = [
     "sample text primary key",
     "study text",
     "runid text",
-    "last_status text",
+    "status text",
     "last_update datetime",
     "run_count integer",
-    "status_describe text",
-    "error_describe text",
+    "description text",
+    "error_text text",
     "stop_reason text",
 ]
 
@@ -48,6 +48,7 @@ def setup_conf(wdir):
 analysis_db = {wdir}/admin/analysis.sqlite3
 upload_db = {wdir}/admin/upload.sqlite3
 job_db = {wdir}/admin/job.sqlite3
+request_dir = {wdir}/admin/request
 
 [work]
 dir = {wdir}
