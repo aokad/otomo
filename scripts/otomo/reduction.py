@@ -15,7 +15,7 @@ STOP_REASON =  {
         "not_available_location": "The object is not available from your location. ( 406 )",
         "name_not_found": "name not found while resolving query within virtual file system module - failed to resolve accession",
     },
-    "star": {
+    "star_alignment": {
         "short_read": "EXITING because of FATAL ERROR in reads input: short read sequence line: ",
         "not_consistent": "EXITING because of FATAL ERROR: Read1 and Read2 are not consistent, reached the end of the one before the other one",
         "not_equal": "EXITING because of FATAL ERROR in reads input: quality string length is not equal to sequence length",
