@@ -8,6 +8,7 @@ Created on Tue Jun 28 13:18:34 2016
 
 import unittest
 import subprocess
+import datetime
 import os
 import otomo.analysis_status
 import otomo.qreport
@@ -235,11 +236,11 @@ class OtomoTest(unittest.TestCase):
     def test_03_slice_jobcount(self):
         subprocess.check_call("otomo setup --wdir %s" % (output_dir), shell=True)
         subprocess.check_call("otomo regjob --qacct %s" % (qacct), shell=True)
-        ret_sample = otomo.qreport.slice_jobcount_all(end_time = "202106221500")
+        ret_sample = otomo.qreport.slice_jobcount_all(end_time = datetime.datetime.strptime("202106221500", '%Y%m%d%H%M'))
         counts = []
         for c in ret_sample:
             counts.append(c[1])
-        self.assertEqual (counts, [0, 15, 19, 1])
+        self.assertEqual (counts, [1, 15, 19, 1])
 
 def suite():
     suite = unittest.TestSuite()

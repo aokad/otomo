@@ -18,8 +18,8 @@ def __select(b_time, fail, max, conf_file):
     sql = "select * from job"
     
     where = ""
-    if b_time != "":
-        where = "where start_time>='%s'" % (__text_to_date(b_time))
+    if b_time != None:
+        where = "where start_time>='%s'" % (b_time.strftime('%Y/%m/%d %H:%M:%S'))
     if fail:
         if where != "":
             where += " and failed=1"
@@ -33,15 +33,14 @@ def __select(b_time, fail, max, conf_file):
     
     return __query(sql, conf_file)
 
-def __text_to_date(text):
-    dt = datetime.datetime.strptime(text, '%Y%m%d%H%M')
-    return dt.strftime('%Y/%m/%d %H:%M:%S')
-
-def select(b_time = "", fail = False, max = 0, conf=otomo.CONFIG.DEFAULT_CONF):
+def select(b_time = None, fail = False, max = 0, conf=otomo.CONFIG.DEFAULT_CONF):
     return __select(b_time, fail, max, conf)
 
 def main(args):
-    data = __select(args.begin, args.failed, args.max, args.conf)
+    b_time = None
+    if args.begin != "":
+        b_time = datetime.datetime.strptime(args.begin, '%Y%m%d%H%M')
+    data = __select(b_time, args.failed, args.max, args.conf)
     header = []
     for h in otomo.CONFIG.JOB_COLUMNS:
         header.append(h.split(" ")[0])
@@ -53,28 +52,24 @@ def main(args):
         print("\t".join(item))
 
 def slice_jobcount(slice_time, conf=otomo.CONFIG.DEFAULT_CONF):
-    sql = "select count(jobname) from job where start_time<='{slice}' and end_time>='{slice}'".format(slice = __text_to_date(slice_time))
+    sql = "select count(jobname) from job where start_time<='{slice}' and end_time>='{slice}'".format(slice = slice_time.strftime('%Y/%m/%d %H:%M:%S'))
     jobs = __query(sql, conf)
     return jobs[0][0]
 
-def slice_jobcount_all(first_time = "", end_time = "", conf=otomo.CONFIG.DEFAULT_CONF):
+def slice_jobcount_all(first_time = None, end_time = None, conf=otomo.CONFIG.DEFAULT_CONF):
     jobcounts = []
-    if first_time == "":
+    if first_time == None:
         sql = "select start_time from job order by start_time limit 1"
         result = __query(sql, conf)
         first_time = datetime.datetime.strptime(result[0][0], '%Y/%m/%d %H:%M:%S')
-    else:
-        first_time = datetime.datetime.strptime(first_time, '%Y%m%d%H%M%S')
     
-    if end_time == "":
+    if end_time == None:
         end_time = datetime.datetime.now()
-    else:
-        end_time = datetime.datetime.strptime(end_time, '%Y%m%d%H%M%S')
 
     passed_time = (end_time - first_time).total_seconds()
     for i in range(0, int(passed_time/60), 10):
         slice_time = first_time + datetime.timedelta(minutes=i)
-        jobcounts.append([slice_time, slice_jobcount(slice_time.strftime('%Y%m%d%H%M'), conf)])
+        jobcounts.append([slice_time, slice_jobcount(slice_time, conf)])
 
 #    print(jobcounts)
     return jobcounts
