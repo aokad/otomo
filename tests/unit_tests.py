@@ -10,6 +10,7 @@ import unittest
 import subprocess
 import os
 import otomo.analysis_status
+import otomo.qreport
 
 cur = os.path.dirname(__file__)
 samples1 = cur + "/samples1.json"
@@ -135,7 +136,7 @@ class OtomoTest(unittest.TestCase):
         os.makedirs("%s/iravnet/%s" % (output_dir, "SRP219151_SRR10015396"), exist_ok = True)
         os.makedirs("%s/juncmut/%s" % (output_dir, "SRP219151_SRR10015396"), exist_ok = True)
         os.makedirs("%s/log/%s" % (output_dir, "SRP219151_SRR10015396"), exist_ok = True)
-        fw = open("%s/log/%s/star.e123" % (output_dir, "SRP219151_SRR10015396"), "w")
+        fw = open("%s/log/%s/star_alignment.e123" % (output_dir, "SRP219151_SRR10015396"), "w")
         fw.write("EXITING because of FATAL ERROR in reads input: short read sequence line: \n")
         fw.close()
 
@@ -150,7 +151,7 @@ class OtomoTest(unittest.TestCase):
 
         # job
         subprocess.check_call("otomo regjob --qacct %s" % (qacct), shell=True)
-        subprocess.check_call("otomo qreport --max 10 -f -b 202106050900", shell=True)
+        subprocess.check_call("otomo qreport --max 10 -f -b 202106221445", shell=True)
 
         # view table
         subprocess.check_call('otomo view --table analysis', shell=True)
@@ -230,6 +231,15 @@ class OtomoTest(unittest.TestCase):
 
     def test_03_notify(self):
         subprocess.check_call("otomo notify_quota --quota %s" % (quota), shell=True)
+
+    def test_03_slice_jobcount(self):
+        subprocess.check_call("otomo setup --wdir %s" % (output_dir), shell=True)
+        subprocess.check_call("otomo regjob --qacct %s" % (qacct), shell=True)
+        ret_sample = otomo.qreport.slice_jobcount_all(end_time = "202106221500")
+        counts = []
+        for c in ret_sample:
+            counts.append(c[1])
+        self.assertEqual (counts, [0, 15, 19, 1])
 
 def suite():
     suite = unittest.TestSuite()
