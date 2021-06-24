@@ -40,11 +40,11 @@ JOB_COLUMNS = [
     "run_time_h real",
 ]
 
-MONITOR_INT_COLUMNS = [
+MONITOR_COLUMNS_INT = [
     "timestamp int primary key",
     "value integer",
 ]
-MONITOR_REAL_COLUMNS = [
+MONITOR_COLUMNS_REAL = [
     "timestamp int primary key",
     "value real",
 ]
