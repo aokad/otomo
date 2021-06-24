@@ -12,6 +12,7 @@ import datetime
 import os
 import otomo.analysis_status
 import otomo.qreport
+import otomo.monitor
 
 cur = os.path.dirname(__file__)
 samples1 = cur + "/samples1.json"
@@ -233,7 +234,7 @@ class OtomoTest(unittest.TestCase):
     def test_03_notify(self):
         subprocess.check_call("otomo notify_quota --quota %s" % (quota), shell=True)
 
-    def test_03_slice_jobcount(self):
+    def test_04_slice_jobcount(self):
         subprocess.check_call("otomo setup --wdir %s" % (output_dir), shell=True)
         subprocess.check_call("otomo regjob --qacct %s" % (qacct), shell=True)
         ret_sample = otomo.qreport.slice_jobcount_all(end_time = datetime.datetime.strptime("202106221500", '%Y%m%d%H%M'))
@@ -241,6 +242,12 @@ class OtomoTest(unittest.TestCase):
         for c in ret_sample:
             counts.append(c[1])
         self.assertEqual (counts, [1, 15, 19, 1])
+
+    def test_05_monitor(self):
+        subprocess.check_call("otomo setup --wdir %s" % (output_dir), shell=True)
+        otomo.monitor.insert("hdd_usage", [[1624328040000, 2.2], [1624328880000, 3.1], [1624329000000, 4.5]])
+        ret_sample = otomo.monitor.get("hdd_usage")
+        self.assertEqual (ret_sample, [(1624328040000, 2.2),(1624328880000, 3.1), (1624329000000, 4.5)])
 
 def suite():
     suite = unittest.TestSuite()

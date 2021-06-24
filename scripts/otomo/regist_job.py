@@ -23,7 +23,7 @@ def __insert(item, db):
     for key in otomo.CONFIG.JOB_COLUMNS:
         job.append(item[key.split(" ")[0]])
 
-    con = sqlite3.connect(db)
+    con = sqlite3.connect(db, isolation_level='EXCLUSIVE')
     cur = con.cursor()
     cur.execute("insert into job values (" + ",".join(["?"] * len(job)) + ")", job)
     con.commit()

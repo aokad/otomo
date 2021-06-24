@@ -40,6 +40,15 @@ JOB_COLUMNS = [
     "run_time_h real",
 ]
 
+MONITOR_INT_COLUMNS = [
+    "timestamp int primary key",
+    "value integer",
+]
+MONITOR_REAL_COLUMNS = [
+    "timestamp int primary key",
+    "value real",
+]
+
 import os
 DEFAULT_CONF = os.path.expanduser('~/.otomo.conf')
 
@@ -50,6 +59,7 @@ analysis_db = {wdir}/admin/analysis.sqlite3
 upload_db = {wdir}/admin/upload.sqlite3
 sample_stage_db = {wdir}/admin/sample_stage.sqlite3
 job_db = {wdir}/admin/job.sqlite3
+monitor_db = {wdir}/admin/monitor.sqlite3
 request_dir = {wdir}/admin/request
 
 [work]

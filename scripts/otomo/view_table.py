@@ -93,6 +93,29 @@ def view_job(args):
     con.close()
     print("\n".join(data))
 
+def view_monitor(args):
+    conf = otomo.CONFIG.load_conf(args.conf)
+    db = conf.get("db", "monitor_db")
+
+    con = sqlite3.connect(db)
+    cur = con.cursor()
+    cur.execute("select * from %s %s" % (args.table, args.option))
+
+    data = []
+    header = []
+    for h in otomo.CONFIG.MONITOR_COLUMNS_INT:
+        header.append(h.split(" ")[0])
+    data.append("\t".join(header))
+
+    for row in cur.fetchall():
+        text = []
+        for i in row:
+            text.append(str(i))
+        data.append("\t".join(text))
+
+    con.close()
+    print("\n".join(data))
+
 def main(args):
     if args.table == "analysis":
         view_analysis(args)
@@ -105,6 +128,9 @@ def main(args):
 
     elif args.table == "job":
         view_job(args)
+
+    elif args.table in ["success", "error", "stop", "job_count", "hdd_usage"]:
+        view_monitor(args)
 
 if __name__ == "__main__":
     pass

@@ -38,7 +38,7 @@ def main():
     ##########
     # view 
     view_parser = subparsers.add_parser("view", help = "View Tables")
-    view_parser.add_argument("--table", choices=['analysis', 'upload', 'sample_stage', 'job'], help = "table name")
+    view_parser.add_argument('--table', choices=['analysis', 'upload', 'sample_stage', 'job', 'success', 'error', 'stop', 'job_count', 'hdd_usage'], help = 'table name')
     view_parser.add_argument("--option", metavar = "limit 10", help = "SQL option", type = str, default = "")
     view_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
     view_parser.set_defaults(func = otomo.view_table.main)
