@@ -8,7 +8,7 @@ def get(table, conf_file=otomo.CONFIG.DEFAULT_CONF):
 
     con = sqlite3.connect(db)
     cur = con.cursor()
-    cur.execute("select *from %s" % (table))
+    cur.execute("select *from %s order by timestamp" % (table))
     h = cur.fetchall()
     con.close()
     return h
