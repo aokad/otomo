@@ -6,6 +6,24 @@ import os
 import otomo.CONFIG
 
 def get_sample_w_status(status, limit = 0, conf_file=otomo.CONFIG.DEFAULT_CONF):
+    """
+    指定されたステータスのサンプルを取得する
+    
+    Parameters
+    ----------
+    status : str
+        ステータス
+    
+    limit : int, default 0
+        最大値 (0の場合は無制限)
+    
+    conf_file : str, default otomo.CONFIG.DEFAULT_CONF
+        Path to otomo.cfg
+    
+    Returns
+    -------
+    count : list
+    """
     conf = otomo.CONFIG.load_conf(conf_file)
     db = conf.get("db", "analysis_db")
 
@@ -25,6 +43,19 @@ def get_sample_w_status(status, limit = 0, conf_file=otomo.CONFIG.DEFAULT_CONF):
     return samples
 
 def get_sample_count_groupby_status_stage(conf_file=otomo.CONFIG.DEFAULT_CONF):
+    """
+    ステータスごとステージごとのサンプルをカウントする
+    
+    Parameters
+    ----------
+    conf_file : str, default otomo.CONFIG.DEFAULT_CONF
+        Path to otomo.cfg
+    
+    Returns
+    -------
+    count : dic
+        {STATUS1: {STAGE1: num, STAGE2: num}, STATUS2: {STAGE1: num, STAGE2: num}, ...}
+    """
     conf = otomo.CONFIG.load_conf(conf_file)
     db = conf.get("db", "analysis_db")
     con = sqlite3.connect(db)
@@ -42,6 +73,22 @@ def get_sample_count_groupby_status_stage(conf_file=otomo.CONFIG.DEFAULT_CONF):
     return ret
 
 def get_run_count_w_sample(sample, conf_file=otomo.CONFIG.DEFAULT_CONF):
+    """
+    指定されたサンプルの実行回数を取得する
+    
+    Parameters
+    ----------
+    sample : str
+        サンプルID
+    
+    conf_file : str, default otomo.CONFIG.DEFAULT_CONF
+        Path to otomo.cfg
+    
+    Returns
+    -------
+    count : {}
+        {SAMPLE1: num, SAMPLE2: num, ...}
+    """
     conf = otomo.CONFIG.load_conf(conf_file)
     db = conf.get("db", "sample_stage_db")
 
@@ -57,7 +104,30 @@ def get_run_count_w_sample(sample, conf_file=otomo.CONFIG.DEFAULT_CONF):
     return count
 
 def set_status_request(sample, status, stage = "", error_text = "", stop_reason = "", conf_file=otomo.CONFIG.DEFAULT_CONF):
-
+    """
+    analyis-DB への更新依頼を作成する
+    
+    Parameters
+    ----------
+    sample : str
+        ステータス
+    
+    status : str
+        ステータス
+    
+    stage : str, default ""
+        解析ステージ ("" の場合はstageを更新しない)
+    
+    error_text :str, default ""
+        エラー情報 ("" の場合はerror_textを更新しない)
+    
+    stop_reason : str, default ""
+        解析不可能な理由 ("" の場合はstop_reasonを更新しない)
+    
+    
+    conf_file : str, default otomo.CONFIG.DEFAULT_CONF
+        Path to otomo.cfg
+    """
     conf = otomo.CONFIG.load_conf(conf_file)
     
     now = datetime.datetime.now()
@@ -70,7 +140,7 @@ def set_status_request(sample, status, stage = "", error_text = "", stop_reason 
         "last_update": db_time
     }
 
-    def set_sample_job_request():
+    def __set_sample_job_request():
         write_data = {
             "sample": sample,
             "stage": stage,
@@ -83,7 +153,7 @@ def set_status_request(sample, status, stage = "", error_text = "", stop_reason 
 
     if stage != "":
         write_data["stage"] = stage
-        set_sample_job_request()
+        __set_sample_job_request()
 
     if error_text != "":
         write_data["error_text"] = error_text
@@ -97,7 +167,14 @@ def set_status_request(sample, status, stage = "", error_text = "", stop_reason 
     fw.close()
 
 def set_status_commit(conf_file=otomo.CONFIG.DEFAULT_CONF):
-
+    """
+    analyis-DB への更新依頼をコミットする
+    
+    Parameters
+    ----------
+    conf_file : str, default otomo.CONFIG.DEFAULT_CONF
+        Path to otomo.cfg
+    """
     # analysis db
     conf = otomo.CONFIG.load_conf(conf_file)
     db = conf.get("db", "analysis_db")
@@ -170,6 +247,9 @@ def set_status_commit(conf_file=otomo.CONFIG.DEFAULT_CONF):
             os.remove(request)
 
 def main(args):
+    """
+    command line I/F : analyis-DB のサンプル毎のステータスを更新する
+    """
     if args.commit == False:
         set_status_request(
             args.sample, 

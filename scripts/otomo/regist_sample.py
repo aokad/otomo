@@ -15,6 +15,36 @@ def __exists(sample, table, db):
     return ret
 
 def insert_samples(samples_file, conf_file=otomo.CONFIG.DEFAULT_CONF):
+    """
+    sample情報をanalysis-DB, sample_stage-DBに登録する。すでにDBに登録されている場合、変更なし。
+    
+    Parameters
+    ----------
+    samples_file : str
+        サンプル情報.json へのパス
+        ```
+        {
+            "SRP219151_SRR10015386": {
+                "study": "SRP219151",
+                "runid": "SRR10015386",
+                "upload": {
+                    "expression/SRP219151_SRR10015386/output.txt.fpkm": "s3://BUCKET/expression/SRP219151_SRR10015386/output.txt.fpkm",
+                    "expression/SRP219151_SRR10015386/output.txt.gz": "s3://BUCKET/expression/SRP219151_SRR10015386/output.txt.gz",
+                    ...
+                }
+            },
+            "SRP219151_SRR10015388": {
+                "study": "SRP219151",
+                "runid": "SRR10015388",
+                "upload": {
+                    ...
+                }
+            }
+        }
+        ```
+    conf_file : str, default otomo.CONFIG.DEFAULT_CONF
+        Path to otomo.cfg
+    """
     data = json.load(open(samples_file))
     
     # analysis DB
@@ -53,6 +83,9 @@ def insert_samples(samples_file, conf_file=otomo.CONFIG.DEFAULT_CONF):
     con.close()
     
 def main(args):
+    """
+    command line I/F : sample情報をanalysis-DB, sample_stage-DBに登録する。すでにDBに登録されている場合、変更なし。
+    """
     insert_samples(args.samples, args.conf)
 
 if __name__ == "__main__":

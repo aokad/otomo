@@ -3,6 +3,9 @@ import json
 import otomo.CONFIG
 
 def main(args):
+    """
+    command line I/F : Notify disk quota to slack
+    """
     data = open(args.quota).read().split("\n")
     val = 0.0
     for row in data:

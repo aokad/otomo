@@ -2,6 +2,14 @@ import sqlite3
 import otomo.CONFIG
 
 def create_db_analysis(db):
+    """
+    Initialize the analysis-DB.
+    
+    Parameters
+    ----------
+    db : str
+        Path to analysis-DB
+    """
     con = sqlite3.connect(db)
     cur = con.cursor()
     cur.execute("DROP TABLE IF EXISTS analysis")
@@ -10,6 +18,14 @@ def create_db_analysis(db):
     con.close()
 
 def create_db_upload(db):
+    """
+    Initialize the upload-DB.
+    
+    Parameters
+    ----------
+    db : str
+        Path to upload-DB
+    """
     con = sqlite3.connect(db)
     cur = con.cursor()
     cur.execute("DROP TABLE IF EXISTS upload")
@@ -18,6 +34,14 @@ def create_db_upload(db):
     con.close()
 
 def create_db_sample_stage(db):
+    """
+    Initialize the sample_stage-DB.
+    
+    Parameters
+    ----------
+    db : str
+        Path to sample_stage-DB
+    """
     con = sqlite3.connect(db)
     cur = con.cursor()
     cur.execute("DROP TABLE IF EXISTS sample_stage")
@@ -26,6 +50,14 @@ def create_db_sample_stage(db):
     con.close()
     
 def create_db_job(db):
+    """
+    Initialize the job-DB.
+    
+    Parameters
+    ----------
+    db : str
+        Path to job-DB
+    """
     con = sqlite3.connect(db)
     cur = con.cursor()
     cur.execute("DROP TABLE IF EXISTS job")
@@ -34,6 +66,14 @@ def create_db_job(db):
     con.close()
 
 def create_db_monitor(db):
+    """
+    Initialize the monitor-DB.
+    
+    Parameters
+    ----------
+    db : str
+        Path to monitor-DB
+    """
     con = sqlite3.connect(db)
     cur = con.cursor()
     cur.execute("DROP TABLE IF EXISTS success")
@@ -51,11 +91,14 @@ def create_db_monitor(db):
     con.close()
 
 def main(args):
+    """
+    command line I/F : Create otomo.cfg and initialize the DBs.
+    """
     import os 
     os.makedirs(args.wdir, exist_ok = True)
 
     #setup config
-    otomo.CONFIG.setup_conf(args.wdir)
+    otomo.CONFIG.setup_conf(args.wdir, args.conf)
     
     conf = otomo.CONFIG.load_conf(args.conf)
     db_analysis = conf.get("db", "analysis_db")

@@ -163,8 +163,12 @@ def _main(qacct_path, conf_file=otomo.CONFIG.DEFAULT_CONF):
         __insert_job(item, db)
 
 def main(args):
+    """
+    command line I/F : qacctの結果をjob-DBに登録する。すでにDBに登録されている場合、変更なし。
+    qacct -j "*" -o USER > qacct.txt 
+    """
     _main(args.qacct, args.conf)
 
 if __name__ == "__main__":
-    _main('./qacct.txt')
+    pass
 

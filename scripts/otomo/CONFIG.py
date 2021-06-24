@@ -52,8 +52,20 @@ MONITOR_COLUMNS_REAL = [
 import os
 DEFAULT_CONF = os.path.expanduser('~/.otomo.conf')
 
-def setup_conf(wdir):
-    f = open(DEFAULT_CONF, "w")
+def setup_conf(wdir, conf_file=DEFAULT_CONF):
+    """
+    otomo.cfgを作成する。あれば上書きする。
+    
+    Parameters
+    ----------
+    wdir : str
+        Path to working directory of the pipeline you want to use otomo
+    
+    conf_file : str, default otomo.CONFIG.DEFAULT_CONF
+        Path to otomo.cfg
+    """
+
+    f = open(conf_file, "w")
     f.write("""[db]
 analysis_db = {wdir}/admin/analysis.sqlite3
 upload_db = {wdir}/admin/upload.sqlite3
@@ -78,11 +90,37 @@ remove_dirs = fastq,star,expression,ir_count,iravnet,juncmut
 """.format(wdir = wdir.rstrip("/")))
     f.close()
 
-def load_conf(conf):
+def load_conf(conf_file):
+    """
+    otomo.cfgを読み込む
+    
+    Parameters
+    ----------
+    conf_file : str, default otomo.CONFIG.DEFAULT_CONF
+        Path to otomo.cfg
+    
+    Returns
+    -------
+    parsed_conf : configparser.ConfigParser
+        parsed conf
+    """
     import configparser
     parsed_conf = configparser.ConfigParser()
-    parsed_conf.read(conf)
+    parsed_conf.read(conf_file)
     return parsed_conf
 
 def date_to_text(dt):
+    """
+    datettimeをテキストに変換する
+    
+    Parameters
+    ----------
+    dt : datettime.datetime
+        datetime
+    
+    Returns
+    -------
+    text : str
+        %Y/%m/%d %H:%M:%S
+    """
     return dt.strftime('%Y/%m/%d %H:%M:%S')

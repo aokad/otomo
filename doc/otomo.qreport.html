@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module otomo.qreport</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="otomo.html"><font color="#ffffff">otomo</font></a>.qreport</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/aokada/venv/sqlite3/lib/python3.6/site-packages/otomo-0.0.1-py3.6.egg/otomo/qreport.py">/home/aokada/venv/sqlite3/lib/python3.6/site-packages/otomo-0.0.1-py3.6.egg/otomo/qreport.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="datetime.html">datetime</a><br>
+</td><td width="25%" valign=top><a href="otomo.html">otomo</a><br>
+</td><td width="25%" valign=top><a href="sqlite3.html">sqlite3</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-main"><strong>main</strong></a>(args)</dt><dd><tt>command&nbsp;line&nbsp;I/F&nbsp;:&nbsp;Print&nbsp;the&nbsp;result&nbsp;of&nbsp;qreport</tt></dd></dl>
+ <dl><dt><a name="-slice_jobcount_all"><strong>slice_jobcount_all</strong></a>(first_time=None, end_time=None, conf_file='/home/aokada/.otomo.conf')</dt><dd><tt>指定時間に起動していたジョブ数をカウントする<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+first_time&nbsp;:&nbsp;datetime.datetime,&nbsp;default&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;カウント開始時間（なければデータの最初の時間）<br>
+&nbsp;<br>
+end_time&nbsp;:&nbsp;datetime.datetime,&nbsp;default&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;カウント終了時間（なければデータの最後の時間）<br>
+&nbsp;<br>
+conf_file&nbsp;:&nbsp;str,&nbsp;default&nbsp;otomo.CONFIG.DEFAULT_CONF<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Path&nbsp;to&nbsp;otomo.cfg<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+jobcounts&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[[sile_time1,&nbsp;job_count],&nbsp;[sile_time1,&nbsp;job_count],&nbsp;...]</tt></dd></dl>
+</td></tr></table>
+</body></html>

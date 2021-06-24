@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module otomo.analysis_status</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="otomo.html"><font color="#ffffff">otomo</font></a>.analysis_status</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/aokada/venv/sqlite3/lib/python3.6/site-packages/otomo-0.0.1-py3.6.egg/otomo/analysis_status.py">/home/aokada/venv/sqlite3/lib/python3.6/site-packages/otomo-0.0.1-py3.6.egg/otomo/analysis_status.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="datetime.html">datetime</a><br>
+<a href="glob.html">glob</a><br>
+</td><td width="25%" valign=top><a href="json.html">json</a><br>
+<a href="os.html">os</a><br>
+</td><td width="25%" valign=top><a href="otomo.html">otomo</a><br>
+<a href="sqlite3.html">sqlite3</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-get_run_count_w_sample"><strong>get_run_count_w_sample</strong></a>(sample, conf_file='/home/aokada/.otomo.conf')</dt><dd><tt>指定されたサンプルの実行回数を取得する<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+sample&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;サンプルID<br>
+&nbsp;<br>
+conf_file&nbsp;:&nbsp;str,&nbsp;default&nbsp;otomo.CONFIG.DEFAULT_CONF<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Path&nbsp;to&nbsp;otomo.cfg<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+count&nbsp;:&nbsp;{}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{SAMPLE1:&nbsp;num,&nbsp;SAMPLE2:&nbsp;num,&nbsp;...}</tt></dd></dl>
+ <dl><dt><a name="-get_sample_count_groupby_status_stage"><strong>get_sample_count_groupby_status_stage</strong></a>(conf_file='/home/aokada/.otomo.conf')</dt><dd><tt>ステータスごとステージごとのサンプルをカウントする<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+conf_file&nbsp;:&nbsp;str,&nbsp;default&nbsp;otomo.CONFIG.DEFAULT_CONF<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Path&nbsp;to&nbsp;otomo.cfg<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+count&nbsp;:&nbsp;dic<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{STATUS1:&nbsp;{STAGE1:&nbsp;num,&nbsp;STAGE2:&nbsp;num},&nbsp;STATUS2:&nbsp;{STAGE1:&nbsp;num,&nbsp;STAGE2:&nbsp;num},&nbsp;...}</tt></dd></dl>
+ <dl><dt><a name="-get_sample_w_status"><strong>get_sample_w_status</strong></a>(status, limit=0, conf_file='/home/aokada/.otomo.conf')</dt><dd><tt>指定されたステータスのサンプルを取得する<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+status&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ステータス<br>
+&nbsp;<br>
+limit&nbsp;:&nbsp;int,&nbsp;default&nbsp;0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;最大値&nbsp;(0の場合は無制限)<br>
+&nbsp;<br>
+conf_file&nbsp;:&nbsp;str,&nbsp;default&nbsp;otomo.CONFIG.DEFAULT_CONF<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Path&nbsp;to&nbsp;otomo.cfg<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+count&nbsp;:&nbsp;list</tt></dd></dl>
+ <dl><dt><a name="-main"><strong>main</strong></a>(args)</dt><dd><tt>command&nbsp;line&nbsp;I/F&nbsp;:&nbsp;analyis-DB&nbsp;のサンプル毎のステータスを更新する</tt></dd></dl>
+ <dl><dt><a name="-set_status_commit"><strong>set_status_commit</strong></a>(conf_file='/home/aokada/.otomo.conf')</dt><dd><tt>analyis-DB&nbsp;への更新依頼をコミットする<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+conf_file&nbsp;:&nbsp;str,&nbsp;default&nbsp;otomo.CONFIG.DEFAULT_CONF<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Path&nbsp;to&nbsp;otomo.cfg</tt></dd></dl>
+ <dl><dt><a name="-set_status_request"><strong>set_status_request</strong></a>(sample, status, stage='', error_text='', stop_reason='', conf_file='/home/aokada/.otomo.conf')</dt><dd><tt>analyis-DB&nbsp;への更新依頼を作成する<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+sample&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ステータス<br>
+&nbsp;<br>
+status&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ステータス<br>
+&nbsp;<br>
+stage&nbsp;:&nbsp;str,&nbsp;default&nbsp;""<br>
+&nbsp;&nbsp;&nbsp;&nbsp;解析ステージ&nbsp;(""&nbsp;の場合はstageを更新しない)<br>
+&nbsp;<br>
+error_text&nbsp;:str,&nbsp;default&nbsp;""<br>
+&nbsp;&nbsp;&nbsp;&nbsp;エラー情報&nbsp;(""&nbsp;の場合はerror_textを更新しない)<br>
+&nbsp;<br>
+stop_reason&nbsp;:&nbsp;str,&nbsp;default&nbsp;""<br>
+&nbsp;&nbsp;&nbsp;&nbsp;解析不可能な理由&nbsp;(""&nbsp;の場合はstop_reasonを更新しない)<br>
+&nbsp;<br>
+&nbsp;<br>
+conf_file&nbsp;:&nbsp;str,&nbsp;default&nbsp;otomo.CONFIG.DEFAULT_CONF<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Path&nbsp;to&nbsp;otomo.cfg</tt></dd></dl>
+</td></tr></table>
+</body></html>

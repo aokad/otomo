@@ -50,7 +50,15 @@ def __remove(sample, stages, wdir):
     return error
 
 def main(args):
-
+    """
+    command line I/F : ステータスが "success" のサンプルについて、
+    1) 出力ファイルを aws s3 にアップロードし、
+    2) ローカルの出力ファイルを削除し、
+    3) ステータスを "finish" に更新する。
+    
+    アップロードに失敗した場合、ステータスを "upload_error" に更新する
+    ローカルの出力ファイル削除に失敗した場合、ステータスを "remove_error" に更新する
+    """
     conf = otomo.CONFIG.load_conf(args.conf)
     upload_db = conf.get("db", "upload_db")
     endpoint_url = conf.get("upload", "endpoint_url")

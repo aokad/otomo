@@ -1,7 +1,7 @@
 import sqlite3
 import otomo.CONFIG
 
-def view_analysis(args):
+def __view_analysis(args):
     conf = otomo.CONFIG.load_conf(args.conf)
     db = conf.get("db", "analysis_db")
 
@@ -24,7 +24,7 @@ def view_analysis(args):
     con.close()
     print("\n".join(data))
 
-def view_upload(args):
+def __view_upload(args):
     conf = otomo.CONFIG.load_conf(args.conf)
     db = conf.get("db", "upload_db")
 
@@ -47,7 +47,7 @@ def view_upload(args):
     con.close()
     print("\n".join(data))
 
-def view_sample_stage(args):
+def __view_sample_stage(args):
     conf = otomo.CONFIG.load_conf(args.conf)
     db = conf.get("db", "sample_stage_db")
 
@@ -70,7 +70,7 @@ def view_sample_stage(args):
     con.close()
     print("\n".join(data))
 
-def view_job(args):
+def __view_job(args):
     conf = otomo.CONFIG.load_conf(args.conf)
     db = conf.get("db", "job_db")
 
@@ -93,7 +93,7 @@ def view_job(args):
     con.close()
     print("\n".join(data))
 
-def view_monitor(args):
+def __view_monitor(args):
     conf = otomo.CONFIG.load_conf(args.conf)
     db = conf.get("db", "monitor_db")
 
@@ -117,20 +117,23 @@ def view_monitor(args):
     print("\n".join(data))
 
 def main(args):
+    """
+    command line I/F : 指定されたテーブルの内容をprintする。加工無し。
+    """
     if args.table == "analysis":
-        view_analysis(args)
+        __view_analysis(args)
 
     elif args.table == "upload":
-        view_upload(args)
+        __view_upload(args)
 
     elif args.table == "sample_stage":
-        view_sample_stage(args)
+        __view_sample_stage(args)
 
     elif args.table == "job":
-        view_job(args)
+        __view_job(args)
 
     elif args.table in ["success", "error", "stop", "job_count", "hdd_usage"]:
-        view_monitor(args)
+        __view_monitor(args)
 
 if __name__ == "__main__":
     pass

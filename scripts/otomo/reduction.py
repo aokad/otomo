@@ -62,6 +62,13 @@ def __remove(sample, stages, wdir):
     return error
 
 def main(args):
+    """
+    command line I/F : ステータスが "failure" のサンプルについて、
+    1) ログファイルを元に解析不可能か判断し、解析不可能であればステータスを "stop" に更新する。
+       解析不可能でなければステータスを "analysis_error" に更新する。
+    2) ローカルの出力ファイルを削除する。ローカルの出力ファイル削除に失敗した場合、ステータスを "remove_error" に更新する
+    ※ "remove_error" > ("analysis_error", "stop")
+    """
     conf = otomo.CONFIG.load_conf(args.conf)
     stages = conf.get("upload", "remove_dirs").split(",")
     wdir = conf.get("work", "dir")

@@ -19,7 +19,7 @@ def __select(b_time, fail, max, conf_file):
     
     where = ""
     if b_time != None:
-        where = "where start_time>='%s'" % (b_time.strftime('%Y/%m/%d %H:%M:%S'))
+        where = "where start_time>='%s'" % (otomo.CONFIG.date_to_text(b_time))
     if fail:
         if where != "":
             where += " and failed=1"
@@ -33,10 +33,10 @@ def __select(b_time, fail, max, conf_file):
     
     return __query(sql, conf_file)
 
-def select(b_time = None, fail = False, max = 0, conf=otomo.CONFIG.DEFAULT_CONF):
-    return __select(b_time, fail, max, conf)
-
 def main(args):
+    """
+    command line I/F : Print the result of qreport
+    """
     b_time = None
     if args.begin != "":
         b_time = datetime.datetime.strptime(args.begin, '%Y%m%d%H%M')
@@ -51,27 +51,46 @@ def main(args):
             item.append(str(i))
         print("\t".join(item))
 
-def slice_jobcount(slice_time, conf=otomo.CONFIG.DEFAULT_CONF):
-    sql = "select count(jobname) from job where start_time<='{slice}' and end_time>='{slice}'".format(slice = slice_time.strftime('%Y/%m/%d %H:%M:%S'))
-    jobs = __query(sql, conf)
+def __slice_jobcount(slice_time, conf_file):
+    sql = "select count(jobname) from job where start_time<='{slice}' and end_time>='{slice}'".format(slice = otomo.CONFIG.date_to_text(slice_time))
+    jobs = __query(sql, conf_file)
     return jobs[0][0]
 
-def slice_jobcount_all(first_time = None, end_time = None, conf=otomo.CONFIG.DEFAULT_CONF):
+def slice_jobcount_all(first_time = None, end_time = None, conf_file=otomo.CONFIG.DEFAULT_CONF):
+    """
+    指定時間に起動していたジョブ数をカウントする
+    
+    Parameters
+    ----------
+    first_time : datetime.datetime, default None
+        カウント開始時間（なければデータの最初の時間）
+    
+    end_time : datetime.datetime, default None
+        カウント終了時間（なければデータの最後の時間）
+    
+    conf_file : str, default otomo.CONFIG.DEFAULT_CONF
+        Path to otomo.cfg
+    
+    Returns
+    -------
+    jobcounts : list
+        [[sile_time1, job_count], [sile_time1, job_count], ...]
+    """
     jobcounts = []
     if first_time == None:
         sql = "select start_time from job order by start_time limit 1"
-        result = __query(sql, conf)
+        result = __query(sql, conf_file)
         first_time = datetime.datetime.strptime(result[0][0], '%Y/%m/%d %H:%M:%S')
     
     if end_time == None:
         end_time = datetime.datetime.now()
-
+    
     passed_time = (end_time - first_time).total_seconds()
     for i in range(0, int(passed_time/60), 10):
         slice_time = first_time + datetime.timedelta(minutes=i)
-        jobcounts.append([slice_time, slice_jobcount(slice_time, conf)])
-
-#    print(jobcounts)
+        jobcounts.append([slice_time, __slice_jobcount(slice_time, conf_file)])
+    
+    #print(jobcounts)
     return jobcounts
 
 if __name__ == "__main__":
