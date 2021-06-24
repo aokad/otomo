@@ -231,8 +231,8 @@ class OtomoTest(unittest.TestCase):
         subprocess.check_call("otomo view --table analysis", shell=True)
         subprocess.check_call("otomo view --table sample_stage", shell=True)
 
-    def test_03_notify(self):
-        subprocess.check_call("otomo notify_quota --quota %s" % (quota), shell=True)
+    #def test_03_notify(self):
+    #    subprocess.check_call("otomo notify_quota --quota %s" % (quota), shell=True)
 
     def test_04_slice_jobcount(self):
         subprocess.check_call("otomo setup --wdir %s" % (output_dir), shell=True)
