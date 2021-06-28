@@ -14,6 +14,7 @@ STOP_REASON =  {
         "parser_error": "Entity: line 1: parser error :",
         "not_available_location": "The object is not available from your location. ( 406 )",
         "name_not_found": "name not found while resolving query within virtual file system module - failed to resolve accession",
+        "cmn_read_String": "err: cmn_iter.c cmn_read_String",
     },
     "star_alignment": {
         "short_read": "EXITING because of FATAL ERROR in reads input: short read sequence line: ",
