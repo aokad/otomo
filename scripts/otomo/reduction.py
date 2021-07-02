@@ -15,6 +15,8 @@ STOP_REASON =  {
         "not_available_location": "The object is not available from your location. ( 406 )",
         "name_not_found": "name not found while resolving query within virtual file system module - failed to resolve accession",
         "cmn_read_String": "err: cmn_iter.c cmn_read_String",
+        "permission_denied": "unknown while reading file within file system module - unknown system error 'Permission denied(13)'",
+        "file_not_exist": "err: extract_acc2",
     },
     "star_alignment": {
         "short_read": "EXITING because of FATAL ERROR in reads input: short read sequence line: ",
