@@ -19,6 +19,7 @@ STOP_REASON =  {
         "file_not_exist": "err: extract_acc2",
         "read_len_zero": "err: sorter.c producer_thread_func: rec.read.len = 0",
         "doesnt_exist": "no such file or directory",
+        "invalid_accession": "err: invalid accession",
     },
     "star_alignment": {
         "short_read": "EXITING because of FATAL ERROR in reads input: short read sequence line: ",
