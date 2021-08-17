@@ -34,11 +34,11 @@ STOP_REASON =  {
 }
 
 def __stop(sample, wdir):
-
+    
     log_files = sorted(glob.glob("%s/log/%s/*.e*" % (wdir, sample)), key=lambda f: os.stat(f).st_mtime, reverse=True)
     if len(log_files) == 0:
         return ""
-
+    
     last_log_file = log_files[0]
     stage = last_log_file.split("/")[-1].split(".")[0]
     
@@ -48,11 +48,11 @@ def __stop(sample, wdir):
 
     if not stage in STOP_REASON:
         return ""
-
+    
     for key in STOP_REASON[stage]:
         if STOP_REASON[stage][key] in log:
             return "%s:%s" % (stage, key)
-
+    
     return ""
 
 def __remove(sample, stages, wdir):
@@ -62,7 +62,7 @@ def __remove(sample, stages, wdir):
             shutil.rmtree("%s/%s/%s" % (wdir, stage, sample))
             os.makedirs("%s/%s/%s" % (wdir, stage, sample))
         return error
-
+    
     except Exception as e:
         error = str(e)
     return error
@@ -81,9 +81,13 @@ def main(args):
 
     samples = otomo.analysis_status.get_sample_w_status("failure")
     for sample in samples:
-        stop_reason = __stop(sample, wdir)
-        if stop_reason != "":
-            otomo.analysis_status.set_status_request(sample, "stop", stop_reason=stop_reason)
+        try:
+            stop_reason = __stop(sample, wdir)
+            if stop_reason != "":
+                otomo.analysis_status.set_status_request(sample, "stop", stop_reason=stop_reason)
+        except Exception as e:
+            stop_reason = str(e)
+            otomo.analysis_status.set_status_request(sample, "stop_error", error_text=stop_reason)
 
         error_remove = __remove(sample, stages, wdir)
         if error_remove != "":
@@ -95,4 +99,3 @@ def main(args):
     otomo.analysis_status.set_status_commit()
 if __name__ == "__main__":
     pass
-
