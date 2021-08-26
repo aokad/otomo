@@ -66,6 +66,7 @@ def main():
     # insert into job results 
     regjob_parser = subparsers.add_parser("regjob", help = "Insert Into Job Status")
     regjob_parser.add_argument("--qacct", metavar = "/path/to/qacct.txt", help = "", type = str, required=True)
+    regjob_parser.add_argument("--limit", metavar = "30", help = "Minutes, jobs ended after (set 0, not filt)", type = int, default = 0)
     regjob_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
     regjob_parser.set_defaults(func = otomo.regist_job.main)
     

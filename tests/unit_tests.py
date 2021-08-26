@@ -55,18 +55,18 @@ class OtomoTest(unittest.TestCase):
         # set status
         otomo.analysis_status.set_status_request("SRP219151_SRR10015386", "run", stage="fastq")
         otomo.analysis_status.set_status_request("SRP219151_SRR10015386", "run", stage="star")
-        otomo.analysis_status.set_status_request("SRP219151_SRR10015386", "failure")
+        otomo.analysis_status.set_status_request("SRP219151_SRR10015386", "unresolv")
 
         otomo.analysis_status.set_status_request("SRP219151_SRR10015396", "run", stage="fastq")
         otomo.analysis_status.set_status_request("SRP219151_SRR10015396", "run", stage="star")
         otomo.analysis_status.set_status_request("SRP219151_SRR10015396", "run", stage="expression")
-        otomo.analysis_status.set_status_request("SRP219151_SRR10015396", "failure")
+        otomo.analysis_status.set_status_request("SRP219151_SRR10015396", "unresolv")
 
         otomo.analysis_status.set_status_request("SRP219151_SRR10015394", "run", stage="fastq")
         otomo.analysis_status.set_status_request("SRP219151_SRR10015394", "run", stage="star")
         otomo.analysis_status.set_status_request("SRP219151_SRR10015394", "run", stage="expression")
         otomo.analysis_status.set_status_request("SRP219151_SRR10015394", "run", stage="ir_count")
-        otomo.analysis_status.set_status_request("SRP219151_SRR10015394", "failure")
+        otomo.analysis_status.set_status_request("SRP219151_SRR10015394", "unresolv")
 
         subprocess.check_call("otomo analysis --sample SRP219151_SRR10015388 --status run --stage fastq", shell=True)
         subprocess.check_call("otomo analysis --sample SRP219151_SRR10015388 --status run --stage star", shell=True)
@@ -98,7 +98,7 @@ class OtomoTest(unittest.TestCase):
         subprocess.check_call("otomo analysis --sample SRP219151_SRR10015398 --status run --stage fastq", shell=True)
         subprocess.check_call("otomo analysis --commit", shell=True)
 
-        ret_sample = otomo.analysis_status.get_sample_w_status("failure")
+        ret_sample = otomo.analysis_status.get_sample_w_status("unresolv")
         self.assertEqual (ret_sample, ["SRP219151_SRR10015386","SRP219151_SRR10015394", "SRP219151_SRR10015396"])
 
         ret_sample = otomo.analysis_status.get_sample_w_status("success")
@@ -115,9 +115,9 @@ class OtomoTest(unittest.TestCase):
         self.assertEqual (ret_sample["run"]["fastq"], 1)
         self.assertEqual (ret_sample["run"]["star"], 1)
         self.assertEqual (ret_sample["success"]["juncmut"], 3)
-        self.assertEqual (ret_sample["failure"]["star"], 1)
-        self.assertEqual (ret_sample["failure"]["ir_count"], 1)
-        self.assertEqual (ret_sample["failure"]["expression"], 1)
+        self.assertEqual (ret_sample["unresolv"]["star"], 1)
+        self.assertEqual (ret_sample["unresolv"]["ir_count"], 1)
+        self.assertEqual (ret_sample["unresolv"]["expression"], 1)
 
         # reduction
         os.makedirs("%s/fastq/%s" % (output_dir, "SRP219151_SRR10015386"), exist_ok = True)
@@ -210,10 +210,10 @@ class OtomoTest(unittest.TestCase):
         subprocess.check_call("otomo setup --wdir %s" % (output_dir), shell=True)
         subprocess.check_call("otomo regsample --samples %s" % (samples2), shell=True)
 
-        otomo.analysis_status.set_status_request("SRP212755_SRR10080437", "failure")
+        otomo.analysis_status.set_status_request("SRP212755_SRR10080437", "unresolv")
         otomo.analysis_status.set_status_commit()
         subprocess.check_call("otomo regsample --samples %s" % (samples2), shell=True)
-        ret_sample = otomo.analysis_status.get_sample_w_status("failure")
+        ret_sample = otomo.analysis_status.get_sample_w_status("unresolv")
         self.assertEqual (ret_sample, ["SRP212755_SRR10080437"])
 
         # job

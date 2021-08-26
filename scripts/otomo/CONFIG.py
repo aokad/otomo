@@ -85,7 +85,7 @@ label = NAME
 [upload]
 endpoint_url = 
 profile = 
-remove_dirs = fastq,star,expression,ir_count,iravnet,juncmut
+remove_dirs = fastq,star,expression,ir_count,iravnet,juncmut,join
 
 """.format(wdir = wdir.rstrip("/")))
     f.close()

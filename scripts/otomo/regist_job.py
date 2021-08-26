@@ -162,12 +162,37 @@ def _main(qacct_path, conf_file=otomo.CONFIG.DEFAULT_CONF):
     if item["jobnumber"] != "" and item["jobname"] != "QLOGIN":
         __insert_job(item, db)
 
+def _filt_qacct(input_qacct, output_qacct, limit = 0):
+    f = open(input_qacct)
+    fw = open(output_qacct, "w")
+    queue = ""
+    ok = False
+    base_time = datetime.datetime.now() - datetime.timedelta(minutes=limit)
+    for row in f.readlines():
+        if row.startswith("="):
+            if ok:
+                fw.write(queue)
+            queue = ""
+            ok = False
+        elif row.startswith("end_time"):
+            text = row.split(" ")[-2] + " " + row.rstrip().split(" ")[-1]
+            end_time = __text_to_date(text)
+            if end_time > base_time or limit == 0:
+                ok = True
+        queue += row
+    if ok:
+        fw.write(queue)
+    fw.close()
+    f.close()
+
 def main(args):
     """
     command line I/F : qacctの結果をjob-DBに登録する。すでにDBに登録されている場合、変更なし。
     qacct -j "*" -o USER > qacct.txt 
     """
-    _main(args.qacct, args.conf)
+    filt = args.qacct + ".filt"
+    _filt_qacct(args.qacct, filt, args.limit)
+    _main(filt, args.conf)
 
 if __name__ == "__main__":
     pass

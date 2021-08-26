@@ -44,7 +44,7 @@ def __stop(sample, wdir):
     last_log_file = log_files[0]
     stage = last_log_file.split("/")[-1].split(".")[0]
     
-    f = open(last_log_file)
+    f = open(last_log_file, encoding="utf-8", errors="replace")
     log = f.read()
     f.close()
 
@@ -77,7 +77,7 @@ def __remove(sample, stages, wdir):
 
 def main(args):
     """
-    command line I/F : ステータスが "failure" のサンプルについて、
+    command line I/F : ステータスが "unresolv" のサンプルについて、
     1) ログファイルを元に解析不可能か判断し、解析不可能であればステータスを "stop" に更新する。
        解析不可能でなければステータスを "analysis_error" に更新する。
     2) ローカルの出力ファイルを削除する。ローカルの出力ファイル削除に失敗した場合、ステータスを "remove_error" に更新する
@@ -88,6 +88,7 @@ def main(args):
     wdir = conf.get("work", "dir")
 
     samples = otomo.analysis_status.get_sample_w_status("failure")
+    samples += otomo.analysis_status.get_sample_w_status("unresolv")
     for sample in samples:
         try:
             stop_reason = __stop(sample, wdir)
