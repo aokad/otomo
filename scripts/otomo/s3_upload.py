@@ -73,7 +73,7 @@ def main(args):
         if error_upload == "":
             error_remove = __remove(sample, stages, wdir)
             if error_remove == "":
-                otomo.analysis_status.set_status_request(sample, "finish")
+                otomo.analysis_status.set_status_request(sample, "finish", error_text="")
             else:
                 otomo.analysis_status.set_status_request(sample, "remove_error", error_text=error_remove)
         else:

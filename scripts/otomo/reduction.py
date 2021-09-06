@@ -22,6 +22,7 @@ STOP_REASON =  {
         "doesnt_exist": ["str", "no such file or directory"],
         "invalid_accession": ["str", "err: invalid accession"],
         "read_len_not_quality_len": ["re", r"err: row #.+ : READ.len\([0-9]+\) != QUALITY.len\([0-9]+\) \(D\)"],
+        "no_1_1fastq": ["str", "/1_1.fastq\n[E::stk_squeeze] failed to open the input file/stream."],
     },
     "star_alignment": {
         "short_read": ["str", "EXITING because of FATAL ERROR in reads input: short read sequence line: "],
@@ -36,32 +37,36 @@ STOP_REASON =  {
 }
 
 def __stop(sample, wdir):
-    
-    log_files = sorted(glob.glob("%s/log/%s/*.e*" % (wdir, sample)), key=lambda f: os.stat(f).st_mtime, reverse=True)
-    if len(log_files) == 0:
-        return ""
-    
-    last_log_file = log_files[0]
-    stage = last_log_file.split("/")[-1].split(".")[0]
-    
-    f = open(last_log_file, encoding="utf-8", errors="replace")
-    log = f.read()
-    f.close()
+    error = ""
+    stop =""
+    try:
+        log_files = sorted(glob.glob("%s/log/%s/*.e*" % (wdir, sample)), key=lambda f: os.stat(f).st_mtime, reverse=True)
+        if len(log_files) == 0:
+            return (stop, error)
+        
+        last_log_file = log_files[0]
+        stage = last_log_file.split("/")[-1].split(".")[0]
+        
+        f = open(last_log_file, encoding="utf-8", errors="replace")
+        log = f.read()
+        f.close()
 
-    if not stage in STOP_REASON:
-        return ""
-    
-    for key in STOP_REASON[stage]:
-        stype = STOP_REASON[stage][key][0]
-        text = STOP_REASON[stage][key][1]
+        if not stage in STOP_REASON:
+            return (stop, error)
+        
+        for key in STOP_REASON[stage]:
+            stype = STOP_REASON[stage][key][0]
+            text = STOP_REASON[stage][key][1]
 
-        if stype == "re" and re.search(text, log):
-            return "%s:%s" % (stage, key)
+            if stype == "re" and re.search(text, log):
+                return ("%s:%s" % (stage, key), error)
 
-        if stype == "str" and text in log:
-            return "%s:%s" % (stage, key)
-    
-    return ""
+            if stype == "str" and text in log:
+                return ("%s:%s" % (stage, key), error)
+
+    except Exception as e:
+        error = str(e)
+    return (stop, error)
 
 def __remove(sample, stages, wdir):
     error = ""
@@ -78,10 +83,12 @@ def __remove(sample, stages, wdir):
 def main(args):
     """
     command line I/F : ステータスが "unresolv" のサンプルについて、
-    1) ログファイルを元に解析不可能か判断し、解析不可能であればステータスを "stop" に更新する。
+    1) ローカルの出力ファイルを削除する。ファイル削除失敗時、ステータスを "remove_error" に更新する
+    2) ログファイルを元に解析不可能か判断し、解析不可能であればステータスを "stop" に更新する。
+       判定失敗時、ステータスを "stop_error" に更新する。
        解析不可能でなければステータスを "analysis_error" に更新する。
-    2) ローカルの出力ファイルを削除する。ローカルの出力ファイル削除に失敗した場合、ステータスを "remove_error" に更新する
-    ※ "remove_error" > ("analysis_error", "stop")
+
+    ※ "remove_error" > "stop_error" > "stop" > "analysis_error"
     """
     conf = otomo.CONFIG.load_conf(args.conf)
     stages = conf.get("upload", "remove_dirs").split(",")
@@ -90,21 +97,19 @@ def main(args):
     samples = otomo.analysis_status.get_sample_w_status("failure")
     samples += otomo.analysis_status.get_sample_w_status("unresolv")
     for sample in samples:
-        try:
-            stop_reason = __stop(sample, wdir)
-            if stop_reason != "":
-                otomo.analysis_status.set_status_request(sample, "stop", stop_reason=stop_reason)
-        except Exception as e:
-            stop_reason = str(e)
-            otomo.analysis_status.set_status_request(sample, "stop_error", error_text=stop_reason)
-
         error_remove = __remove(sample, stages, wdir)
         if error_remove != "":
             otomo.analysis_status.set_status_request(sample, "remove_error", error_text=error_remove)
-
-        if stop_reason == "" and error_remove == "":
-            otomo.analysis_status.set_status_request(sample, "analysis_error")
+        else:
+            (stop_reason, error_stop) = __stop(sample, wdir)
+            if error_stop != "":
+                otomo.analysis_status.set_status_request(sample, "stop_error", error_text=error_stop)
+            elif stop_reason != "":
+                otomo.analysis_status.set_status_request(sample, "stop", stop_reason=stop_reason)
+            else:
+                otomo.analysis_status.set_status_request(sample, "analysis_error", error_text="")
 
     otomo.analysis_status.set_status_commit()
+
 if __name__ == "__main__":
     pass
