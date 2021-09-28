@@ -3,14 +3,14 @@ import json
 import datetime
 import otomo.CONFIG
 
-def __exists(sample, table, db):
+def __samples(table, db):
     con = sqlite3.connect(db)
     cur = con.cursor()
-    cur.execute('select count(sample) from %s where sample="%s"' % (table, sample))
+    cur.execute('select sample from %s' % (table))
     
-    ret = True
-    if cur.fetchall()[0][0] == 0:
-        ret = False
+    ret = {}
+    for row in cur.fetchall():
+        ret[row[0]] = 0
     con.close()
     return ret
 
@@ -51,37 +51,41 @@ def insert_samples(samples_file, conf_file=otomo.CONFIG.DEFAULT_CONF):
     conf = otomo.CONFIG.load_conf(conf_file)
     db = conf.get("db", "analysis_db")
     
+    samples = __samples("analysis", db)
     now = otomo.CONFIG.date_to_text(datetime.datetime.now())
     insert_list = []
     for key in data:
-        if __exists(key, "analysis", db):
+        if key in samples:
             continue
         study = data[key]["study"]
         runid = data[key]["runid"]
         insert_list.append((key, study, runid, "init", "", now, "", ""))
     
-    con = sqlite3.connect(db)
-    cur = con.cursor()
-    cur.executemany("insert into analysis values (?, ?, ?, ?, ?, ?, ?, ?)", insert_list)
-    con.commit()
-    con.close()
+    if len(insert_list) > 0:
+        con = sqlite3.connect(db)
+        cur = con.cursor()
+        cur.executemany("insert into analysis values (?, ?, ?, ?, ?, ?, ?, ?)", insert_list)
+        con.commit()
+        con.close()
 
     # upload DB
     db = conf.get("db", "upload_db")
     
+    samples = __samples("upload", db)
     insert_list = []
     for key in data:
-        if __exists(key, "upload", db):
+        if key in samples:
             continue
         for output in data[key]["upload"]:
             insert_list.append((key, output, data[key]["upload"][output]))
     
-    con = sqlite3.connect(db)
-    cur = con.cursor()
-    cur.executemany("insert into upload values (?, ?, ?)", insert_list)
-    con.commit()
-    con.close()
-    
+    if len(insert_list) > 0:
+        con = sqlite3.connect(db)
+        cur = con.cursor()
+        cur.executemany("insert into upload values (?, ?, ?)", insert_list)
+        con.commit()
+        con.close()
+        
 def main(args):
     """
     command line I/F : sample情報をanalysis-DB, sample_stage-DBに登録する。すでにDBに登録されている場合、変更なし。
