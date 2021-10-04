@@ -72,6 +72,33 @@ def get_sample_count_groupby_status_stage(conf_file=otomo.CONFIG.DEFAULT_CONF):
     con.close()
     return ret
 
+def get_sample_count_groupby_stop_reason(conf_file=otomo.CONFIG.DEFAULT_CONF):
+    """
+    停止（解析不可）したサンプルについて、その理由ごとのサンプル数をカウントする
+    
+    Parameters
+    ----------
+    conf_file : str, default otomo.CONFIG.DEFAULT_CONF
+        Path to otomo.cfg
+    
+    Returns
+    -------
+    count : dic
+        {REASON1: num, REASON2: num, ...}
+    """
+    conf = otomo.CONFIG.load_conf(conf_file)
+    db = conf.get("db", "analysis_db")
+    con = sqlite3.connect(db)
+    cur = con.cursor()
+    cur.execute("select stop_reason,count(sample) from analysis group by stop_reason")
+
+    ret = {}
+    for stop_reason,count in cur.fetchall():
+        if stop_reason == "": continue
+        ret[stop_reason] = count
+    con.close()
+    return ret
+
 def get_run_count_w_sample(sample, conf_file=otomo.CONFIG.DEFAULT_CONF):
     """
     指定されたサンプルの実行回数を取得する
