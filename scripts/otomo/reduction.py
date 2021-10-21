@@ -21,7 +21,7 @@ STOP_REASON =  {
         "read_len_zero": ["str", "err: sorter.c producer_thread_func: rec.read.len = 0"],
         "doesnt_exist": ["str", "no such file or directory"],
         "invalid_accession": ["str", "err: invalid accession"],
-        "read_len_not_quality_len": ["re", r"err: row #.+ : READ.len\([0-9]+\) != QUALITY.len\([0-9]+\) \(D\)"],
+        "read_len_not_quality_len": ["re", r"err: row #.+ : READ.len\([0-9]+\) != QUALITY\.len\([0-9]+\) \([A-Z]+\)"],
         "no_1_1fastq": ["str", "/1_1.fastq\n[E::stk_squeeze] failed to open the input file/stream."],
     },
     "star_alignment": {

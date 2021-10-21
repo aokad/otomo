@@ -175,7 +175,7 @@ def _filt_qacct(input_qacct, output_qacct, limit = 0):
             queue = ""
             ok = False
         elif row.startswith("end_time"):
-            text = row.split(" ")[-2] + " " + row.rstrip().split(" ")[-1]
+            text = row.rstrip().split(" ")[-2] + " " + row.rstrip().split(" ")[-1]
             end_time = __text_to_date(text)
             if end_time > base_time or limit == 0:
                 ok = True
