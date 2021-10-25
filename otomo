@@ -17,7 +17,7 @@ import otomo.regist_job
 import otomo.qreport
 import otomo.s3_upload
 import otomo.reduction
-import otomo.notify_quota
+import otomo.notify_slack
 import otomo.CONFIG
 
 from otomo import __version__
@@ -80,11 +80,11 @@ def main():
     qreport_parser.set_defaults(func = otomo.qreport.main)
 
     ##########
-    # notify_quota 
-    quota_parser = subparsers.add_parser("notify_quota", help = "Notify Quota")
-    quota_parser.add_argument("--quota", metavar = "/path/to/quota.txt", help = "", type = str, required=True)
+    # notify_slack 
+    quota_parser = subparsers.add_parser("notify_slack", help = "Notify Quota")
+    quota_parser.add_argument("--message_file", metavar = "/path/to/message.txt", help = "", type = str, required=True)
     quota_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
-    quota_parser.set_defaults(func = otomo.notify_quota.main)
+    quota_parser.set_defaults(func = otomo.notify_slack.main)
 
     ##########
     # upload 
