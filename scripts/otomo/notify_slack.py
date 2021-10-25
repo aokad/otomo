@@ -9,13 +9,11 @@ def main(args):
     message = open(args.message_file).read()
     if message != "":
         conf = otomo.CONFIG.load_conf(args.conf)
-        channel = conf.get("notify", "channel")
-        
         payload_dic = {
             "text": message,
-            "channel": channel
+            "channel": conf.get("notify", "channel")
         }
-        requests.post(slack_url, data=json.dumps(payload_dic))
+        requests.post(conf.get("notify", "slack_url"), data=json.dumps(payload_dic))
 
 if __name__ == "__main__":
     pass
