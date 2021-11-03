@@ -26,7 +26,8 @@ STOP_REASON =  {
     },
     "star_alignment": {
         "short_read": ["str", "EXITING because of FATAL ERROR in reads input: short read sequence line: "],
-        "not_consistent": ["str", "EXITING because of FATAL ERROR: Read1 and Read2 are not consistent, reached the end of the one before the other one"],
+        #"not_consistent": ["str", "EXITING because of FATAL ERROR: Read1 and Read2 are not consistent, reached the end of the one before the other one"],
+        "not_consistent": ["str", "EXITING because of FATAL ERROR: read files are not consistent, reached the end of the one before the other one"],
         "not_equal": ["str", "EXITING because of FATAL ERROR in reads input: quality string length is not equal to sequence length"],
         "SJ_output_is_too_small": ["str", "EXITING because of fatal error: buffer size for SJ output is too small"],
         "unknown_file_format": ["str", "EXITING because of FATAL ERROR in input reads: unknown file format: the read ID should start with"],
