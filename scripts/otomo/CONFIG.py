@@ -40,6 +40,26 @@ JOB_COLUMNS = [
     "run_time_h real",
 ]
 
+ECSUB_COLUMNS = [
+    "taskname text",
+    "taskid text",
+    "failed integer",
+    "image text",
+    "instance_type text",
+    "cpu integer",
+    "memory integer",
+    "disk_size integer",
+    "max_pct_cpu_util integer",
+    "max_pct_memory_util integer",
+    "max_pct_disk_util integer",
+    "start_time datetime",
+    "end_time datetime",
+    "run_time_h real",
+    "spot integer",
+    "goofys integer",
+    "region text",
+]
+
 MONITOR_COLUMNS_INT = [
     "timestamp int primary key",
     "value integer",
@@ -76,6 +96,7 @@ request_dir = {wdir}/admin/request
 
 [work]
 dir = {wdir}
+ecsub_dir = 
 
 [notify]
 slack_url = 

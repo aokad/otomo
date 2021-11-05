@@ -32,6 +32,7 @@ def main():
     # setup 
     setup_parser = subparsers.add_parser("setup", help = "Create SQLiteDB")
     setup_parser.add_argument("--wdir", metavar = "/path/to/dir", help = "gcat_workflow working directory", type = str, required=True)
+    setup_parser.add_argument("--ecsub", help = "create ecsub db", action = 'store_true')
     setup_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
     setup_parser.set_defaults(func = otomo.setup.main)
 

@@ -65,6 +65,22 @@ def create_db_job(db):
     con.commit()
     con.close()
 
+def create_db_ecsub(db):
+    """
+    Initialize the ecsub-DB.
+    
+    Parameters
+    ----------
+    db : str
+        Path to ecsub-DB
+    """
+    con = sqlite3.connect(db)
+    cur = con.cursor()
+    cur.execute("DROP TABLE IF EXISTS ecsub")
+    cur.execute("create table ecsub (%s, primary key(taskname, taskid))" % (",".join(otomo.CONFIG.ECSUB_COLUMNS)))
+    con.commit()
+    con.close()
+
 def create_db_monitor(db):
     """
     Initialize the monitor-DB.
@@ -84,8 +100,6 @@ def create_db_monitor(db):
     cur.execute("create table job_count (%s)" % (",".join(otomo.CONFIG.MONITOR_COLUMNS_INT)))
     cur.execute("DROP TABLE IF EXISTS hdd_usage")
     cur.execute("create table hdd_usage (%s)" % (",".join(otomo.CONFIG.MONITOR_COLUMNS_REAL)))
-#    cur.execute("DROP TABLE IF EXISTS error")
-#    cur.execute("create table error (%s)" % (",".join(otomo.CONFIG.MONITOR_COLUMNS_INT)))
     cur.execute("DROP TABLE IF EXISTS unresolv")
     cur.execute("create table unresolv (%s)" % (",".join(otomo.CONFIG.MONITOR_COLUMNS_INT)))
     cur.execute("DROP TABLE IF EXISTS analysis_error")
@@ -131,5 +145,11 @@ def main(args):
     create_db_job(db_job)
     create_db_monitor(db_monitor)
     
+    if args.ecsub:
+        conf = otomo.CONFIG.load_conf(args.conf)
+        db_ecsub = conf.get("db", "ecsub_db")
+        os.makedirs(os.path.dirname(db_ecsub), exist_ok = True)
+        create_db_ecsub(db_ecsub)
+
 if __name__ == "__main__":
     pass
