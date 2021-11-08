@@ -93,6 +93,29 @@ def __view_job(args):
     con.close()
     print("\n".join(data))
 
+def __view_ecsub(args):
+    conf = otomo.CONFIG.load_conf(args.conf)
+    db = conf.get("db", "ecsub_db")
+
+    con = sqlite3.connect(db)
+    cur = con.cursor()
+    cur.execute("select * from ecsub %s" % args.option)
+
+    data = []
+    header = []
+    for h in otomo.CONFIG.ECSUB_COLUMNS:
+        header.append(h.split(" ")[0])
+    data.append("\t".join(header))
+
+    for row in cur.fetchall():
+        text = []
+        for i in row:
+            text.append(str(i))
+        data.append("\t".join(text))
+
+    con.close()
+    print("\n".join(data))
+
 def __view_monitor(args):
     conf = otomo.CONFIG.load_conf(args.conf)
     db = conf.get("db", "monitor_db")
@@ -131,6 +154,9 @@ def main(args):
 
     elif args.table == "job":
         __view_job(args)
+
+    elif args.table == "ecsub":
+        __view_ecsub(args)
 
     elif args.table in ["success", "error", "stop", "job_count", "hdd_usage"]:
         __view_monitor(args)

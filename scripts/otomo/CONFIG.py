@@ -7,6 +7,7 @@ ANALYSIS_COLUMNS = [
     "last_update datetime",
     "error_text text",
     "stop_reason text",
+    "size integer",
 ]
 
 UPLOAD_COLUMNS = [
@@ -26,7 +27,7 @@ JOB_COLUMNS = [
     "taskid integer",
     "jobname text",
     "sample text",
-    "failed integer",
+    "stauts text",
     "use_cpu_rate real",
     "l_slots integer",
     "use_maxvmem_g real",
@@ -43,7 +44,7 @@ JOB_COLUMNS = [
 ECSUB_COLUMNS = [
     "taskname text",
     "taskid text",
-    "failed integer",
+    "status text",
     "image text",
     "instance_type text",
     "cpu integer",
@@ -92,6 +93,7 @@ upload_db = {wdir}/admin/upload.sqlite3
 sample_stage_db = {wdir}/admin/sample_stage.sqlite3
 job_db = {wdir}/admin/job.sqlite3
 monitor_db = {wdir}/admin/monitor.sqlite3
+ecsub_db = {wdir}/admin/ecsub.sqlite3
 request_dir = {wdir}/admin/request
 
 [work]

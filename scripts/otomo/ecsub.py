@@ -8,7 +8,7 @@ import otomo.CONFIG
 def __exists(taskname, db):
     con = sqlite3.connect(db)
     cur = con.cursor()
-    cur.execute("select count(taskname) from job where taskname=:taskname",
+    cur.execute("select count(taskname) from ecsub where taskname=:taskname",
         {"taskname": taskname}
     )
     
@@ -53,6 +53,7 @@ def __get_max_metrics(file_path):
     values = []
     header = True
     for row in open(file_path).read().split("\n"):
+        if row == "": continue
         if header:
             header = False
             continue
@@ -75,19 +76,21 @@ def upsert_job(taskname, conf_file):
         data = {
             "taskname": taskname,
             "taskid": taskid,
-            "image": task_definition["containerDefinitions"][0]["image"]
-            "goofys": task_definition["containerDefinitions"][0]["privileged"]
+            "image": task_definition["containerDefinitions"][0]["image"],
+            "goofys": task_definition["containerDefinitions"][0]["privileged"],
+            "status": "run"
         }
+        exit_code = -1
         overrides = json.load(open(overrides_json))
         data["cpu"] = overrides["containerOverrides"][0]["cpu"]
         data["memory"] = overrides["containerOverrides"][0]["memory"]
 
-        specification = json.load(open(overrides_json.replace("containerOverrides", "specification_file"))
+        specification = json.load(open(overrides_json.replace("containerOverrides", "specification_file")))
         data["disk_size"] = specification["BlockDeviceMappings"][0]["Ebs"]["VolumeSize"]
         data["instance_type"] = specification["InstanceType"]
         data["region"] = specification["Placement"]["AvailabilityZone"]
         
-        data["sopt"] = len(glob.glob(task_dir + "/log/request-spot-instances.%s.*.log" % (taskid))) > 0
+        data["spot"] = len(glob.glob(task_dir + "/log/request-spot-instances.%s.*.log" % (taskid))) > 0
 
         start_task = sorted(glob.glob(task_dir + "/log/start-task.%s.*.log" % (taskid)))
         if len(start_task) > 0:
@@ -100,20 +103,30 @@ def upsert_job(taskname, conf_file):
                 if task["tasks"][0]["lastStatus"] == "STOPPED":
                     dt2 = datetime.datetime.fromtimestamp(os.stat(describe_task[-1]).st_mtime)
                     data["end_time"] = otomo.CONFIG.date_to_text(dt2)
-                    data["run_time"] = "%.2f" % ((dt2-dt1).total_seconds() / 3600)
-                    data["failed"] = task["tasks"][0]["containers"][0]["exitCode"] != 0
+                    data["run_time_h"] = "%.2f" % ((dt2-dt1).total_seconds() / 3600)
+                    exit_code = task["tasks"][0]["containers"][0]["exitCode"]
 
+        metrics_count = 0
         path = task_dir + "/metrics/%d-CPUUtilization.txt" % (int(taskid))
         if os.path.exists(path):
             data["max_pct_cpu_util"] = __get_max_metrics(path)
+            metrics_count += 1
 
         path = task_dir + "/metrics/%d-MemoryUtilization.txt" % (int(taskid))
         if os.path.exists(path):
             data["max_pct_memory_util"] = __get_max_metrics(path)
+            metrics_count += 1
 
         path = task_dir + "/metrics/%d-DataStorageUtilization.txt" % (int(taskid))
         if os.path.exists(path):
             data["max_pct_disk_util"] = __get_max_metrics(path)
+            metrics_count += 1
+
+        if metrics_count == 3:
+            if exit_code == 0:
+                data["status"] = "success"
+            else:
+                data["status"] = "failure" 
 
         if __exists(taskname, db):
             __update(data, db)
@@ -124,5 +137,5 @@ def main(args):
     upsert_job(args.taskname, args.conf)
 
 if __name__ == "__main__":
-    upsert_job("", otomo.CONFIG.DEFAULT_CONF)
+    upsert_job("task_acc_1_10-0rxLA", otomo.CONFIG.DEFAULT_CONF)
 
