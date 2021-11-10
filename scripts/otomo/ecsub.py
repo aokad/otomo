@@ -65,20 +65,30 @@ def upsert_job(taskname, conf_file):
     conf = otomo.CONFIG.load_conf(conf_file)
     ecsub_dir = conf.get("work", "ecsub_dir")
     task_dir = "%s/%s" % (ecsub_dir, taskname)
-    if not os.path.exists(task_dir):
-        return
-
     db = conf.get("db", "ecsub_db")
 
+    if not os.path.exists(task_dir):
+        data = {
+            "taskname": taskname,
+            "taskid": "000",
+            "status": "run"
+        }
+        if __exists(taskname, db):
+            __update(data, db)
+        else:
+            __insert(data, db)
+        return
+
     task_definition = json.load(open(task_dir + "/conf/task_definition.json"))
+    
     for overrides_json in sorted(glob.glob(task_dir + "/conf/containerOverrides.*.json")):
         taskid = overrides_json.split(".")[-2]
         data = {
             "taskname": taskname,
             "taskid": taskid,
+            "status": "run",
             "image": task_definition["containerDefinitions"][0]["image"],
             "goofys": task_definition["containerDefinitions"][0]["privileged"],
-            "status": "run"
         }
         exit_code = -1
         overrides = json.load(open(overrides_json))
@@ -104,7 +114,10 @@ def upsert_job(taskname, conf_file):
                     dt2 = datetime.datetime.fromtimestamp(os.stat(describe_task[-1]).st_mtime)
                     data["end_time"] = otomo.CONFIG.date_to_text(dt2)
                     data["run_time_h"] = "%.2f" % ((dt2-dt1).total_seconds() / 3600)
-                    exit_code = task["tasks"][0]["containers"][0]["exitCode"]
+                    try:
+                        exit_code = task["tasks"][0]["containers"][0]["exitCode"]
+                    except Exception:
+                        pass
 
         metrics_count = 0
         path = task_dir + "/metrics/%d-CPUUtilization.txt" % (int(taskid))
@@ -137,5 +150,5 @@ def main(args):
     upsert_job(args.taskname, args.conf)
 
 if __name__ == "__main__":
-    upsert_job("task_acc_1_10-0rxLA", otomo.CONFIG.DEFAULT_CONF)
+    upsert_job("TCGA-CHOL_1110_110927_3", otomo.CONFIG.DEFAULT_CONF)
 
