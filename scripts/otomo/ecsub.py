@@ -67,7 +67,25 @@ def upsert_job(taskname, conf_file):
     task_dir = "%s/%s" % (ecsub_dir, taskname)
     db = conf.get("db", "ecsub_db")
 
+    # init state ?
+    init_state = False
     if not os.path.exists(task_dir):
+        init_state = True
+
+    task_definition_path = task_dir + "/conf/task_definition.json"
+    if not os.path.exists(task_definition_path):
+        init_state = True
+
+    container_overrides_pathes = glob.glob(task_dir + "/conf/containerOverrides.*.json")
+    if len(container_overrides_pathes) == 0:
+        init_state = True
+
+    for o in container_overrides_pathes:
+        if not os.path.exists(o.replace("containerOverrides", "specification_file")):
+            init_state = True
+            break
+
+    if init_state:
         data = {
             "taskname": taskname,
             "taskid": "000",
@@ -79,9 +97,9 @@ def upsert_job(taskname, conf_file):
             __insert(data, db)
         return
 
-    task_definition = json.load(open(task_dir + "/conf/task_definition.json"))
+    task_definition = json.load(open(task_definition_path))
     
-    for overrides_json in sorted(glob.glob(task_dir + "/conf/containerOverrides.*.json")):
+    for overrides_json in sorted(container_overrides_pathes):
         taskid = overrides_json.split(".")[-2]
         data = {
             "taskname": taskname,
@@ -146,8 +164,26 @@ def upsert_job(taskname, conf_file):
         else:
             __insert(data, db)
 
+def update_status(taskname, status, conf_file):
+    conf = otomo.CONFIG.load_conf(conf_file)
+    ecsub_dir = conf.get("work", "ecsub_dir")
+    task_dir = "%s/%s" % (ecsub_dir, taskname)
+    db = conf.get("db", "ecsub_db")
+    data = {
+        "taskname": taskname,
+        "taskid": "000",
+        "status": status
+    }
+    if __exists(taskname, db):
+        __update(data, db)
+    else:
+        __insert(data, db)
+
 def main(args):
-    upsert_job(args.taskname, args.conf)
+    if args.status == "":
+        upsert_job(args.taskname, args.conf)
+    else:
+        update_status(args.taskname, args.status, args.conf)
 
 if __name__ == "__main__":
     upsert_job("TCGA-CHOL_1110_110927_3", otomo.CONFIG.DEFAULT_CONF)

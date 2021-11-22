@@ -76,6 +76,7 @@ def main():
     # upsert into qsub tasks
     regecsub_parser = subparsers.add_parser("regecsub", help = "Upsert Ecsub Tasks")
     regecsub_parser.add_argument("--taskname", metavar = "tasks-XXXX", help = "", type = str, required=True)
+    regecsub_parser.add_argument("--status", metavar = "{status}", help = "run, failue, succes, ...", type = str, default = "")
     regecsub_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
     regecsub_parser.set_defaults(func = otomo.ecsub.main)
     

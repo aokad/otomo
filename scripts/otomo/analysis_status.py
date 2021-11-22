@@ -163,9 +163,10 @@ def set_status_request(sample, status, stage = "", error_text = "", stop_reason 
 
     write_data = {
         "sample": sample,
-        "status": status,
         "last_update": db_time
     }
+    if status != "":
+        write_data["status"] = status
 
     def __set_sample_job_request():
         write_data = {
