@@ -122,8 +122,8 @@ def upsert_job(taskname, conf_file):
 
         start_task = sorted(glob.glob(task_dir + "/log/start-task.%s.*.log" % (taskid)))
         if len(start_task) > 0:
-            #dt1 = datetime.datetime.fromtimestamp(os.stat(start_task[-1]).st_mtime)
-            #data["start_time"] = otomo.CONFIG.date_to_text(dt1)
+            dt1 = datetime.datetime.fromtimestamp(os.stat(start_task[-1]).st_mtime)
+            data["start_time"] = otomo.CONFIG.date_to_text(dt1)
 
             describe_task = sorted(glob.glob(task_dir + "/log/describe-tasks.%s*.log" % (taskid)))
             if len(describe_task) > 0:
