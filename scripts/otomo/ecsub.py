@@ -122,16 +122,30 @@ def upsert_job(taskname, conf_file):
 
         start_task = sorted(glob.glob(task_dir + "/log/start-task.%s.*.log" % (taskid)))
         if len(start_task) > 0:
-            dt1 = datetime.datetime.fromtimestamp(os.stat(start_task[-1]).st_mtime)
-            data["start_time"] = otomo.CONFIG.date_to_text(dt1)
+            #dt1 = datetime.datetime.fromtimestamp(os.stat(start_task[-1]).st_mtime)
+            #data["start_time"] = otomo.CONFIG.date_to_text(dt1)
 
-            describe_task = sorted(glob.glob(task_dir + "/log/describe-tasks.%s.*.log" % (taskid)))
+            describe_task = sorted(glob.glob(task_dir + "/log/describe-tasks.%s*.log" % (taskid)))
             if len(describe_task) > 0:
                 task = json.load(open(describe_task[-1]))
+                try:
+                    dt1 = datetime.datetime.strptime(task["tasks"][0]["startedAt"], "%Y-%m-%dT%H:%M:%S.%f%z")
+                    data["start_time"] = otomo.CONFIG.date_to_text(dt1)
+                except Exception as e:
+                    print(e)
+                    pass
                 if task["tasks"][0]["lastStatus"] == "STOPPED":
-                    dt2 = datetime.datetime.fromtimestamp(os.stat(describe_task[-1]).st_mtime)
-                    data["end_time"] = otomo.CONFIG.date_to_text(dt2)
-                    data["run_time_h"] = "%.2f" % ((dt2-dt1).total_seconds() / 3600)
+                    #dt2 = datetime.datetime.fromtimestamp(os.stat(describe_task[-1]).st_mtime)
+                    #data["end_time"] = otomo.CONFIG.date_to_text(dt2)
+                    #data["run_time_h"] = "%.2f" % ((dt2-dt1).total_seconds() / 3600)
+                    try:
+                        dt2 = datetime.datetime.strptime(task["tasks"][0]["stoppedAt"], "%Y-%m-%dT%H:%M:%S.%f%z")
+                        data["end_time"] = otomo.CONFIG.date_to_text(dt2)
+                        data["run_time_h"] = "%.2f" % ((dt2-dt1).total_seconds() / 3600)
+                    except Exception as e:
+                        print(e)
+                        pass
+
                     try:
                         exit_code = task["tasks"][0]["containers"][0]["exitCode"]
                     except Exception:
@@ -186,5 +200,5 @@ def main(args):
         update_status(args.taskname, args.status, args.conf)
 
 if __name__ == "__main__":
-    upsert_job("TCGA-CHOL_1110_110927_3", otomo.CONFIG.DEFAULT_CONF)
+    upsert_job("TCGA-GBM_1127_212153_1", otomo.CONFIG.DEFAULT_CONF)
 
