@@ -92,13 +92,15 @@ def main(args):
     ※ "remove_error" > "stop_error" > "stop" > "analysis_error"
     """
     conf = otomo.CONFIG.load_conf(args.conf)
-    stages = conf.get("upload", "remove_dirs").split(",")
+    stages = conf.get("reduction", "remove_dirs").split(",")
     wdir = conf.get("work", "dir")
 
     samples = otomo.analysis_status.get_sample_w_status("failure")
     samples += otomo.analysis_status.get_sample_w_status("unresolv")
     for sample in samples:
-        error_remove = __remove(sample, stages, wdir)
+        error_remove = ""
+        if conf.getboolean("reduction", "enable"):
+            error_remove = __remove(sample, stages, wdir)
         if error_remove != "":
             otomo.analysis_status.set_status_request(sample, "remove_error", error_text=error_remove)
         else:

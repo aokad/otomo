@@ -105,6 +105,10 @@ slack_url =
 channel = #channel
 label = NAME
 
+[reduction]
+enable = True
+remove_dirs = fastq,star,expression,ir_count,iravnet,juncmut,join
+
 [upload]
 endpoint_url = 
 profile = 
