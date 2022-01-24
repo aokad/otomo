@@ -21,7 +21,9 @@ STOP_REASON =  {
         "read_len_zero": ["str", "err: sorter.c producer_thread_func: rec.read.len = 0"],
         "doesnt_exist": ["str", "no such file or directory"],
         "invalid_accession": ["str", "err: invalid accession"],
-        "read_len_not_quality_len": ["re", r"err: row #.+ : READ.len\([0-9]+\) != QUALITY\.len\([0-9]+\) \([A-Z]+\)"],
+        "read_len_not_quality_len": ["re", r"err: row #.+ : READ\.len\([0-9]+\) != QUALITY\.len\([0-9]+\) \([A-Z]+\)"],
+        "read_len_not_quality_len2": ["re", r"err: row #.+ : R\[[0-9]+\]\.len\([0-9]+\) != Q\[[0-9]+\]\.len\([0-9]+\)"],
+        "read_len_not_quality_len3": ["re", r"err: row #.+ : Q\[[0-9]+\]\.len\([0-9]+\) \+ Q\[[0-9]+\]\.len\([0-9]+\) != Q\.len\([0-9]+\)"],
         "no_1_1fastq": ["str", "/1_1.fastq\n[E::stk_squeeze] failed to open the input file/stream."],
     },
     "star_alignment": {
@@ -59,7 +61,7 @@ def __stop(sample, wdir):
             stype = STOP_REASON[stage][key][0]
             text = STOP_REASON[stage][key][1]
 
-            if stype == "re" and re.search(text, log):
+            if stype == "re" and re.search(text, log, re.IGNORECASE):
                 return ("%s:%s" % (stage, key), error)
 
             if stype == "str" and text in log:
