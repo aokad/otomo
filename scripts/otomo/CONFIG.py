@@ -27,7 +27,7 @@ JOB_COLUMNS = [
     "taskid integer",
     "jobname text",
     "sample text",
-    "stauts text",
+    "failed text",
     "use_cpu_rate real",
     "l_slots integer",
     "use_maxvmem_g real",
