@@ -19,6 +19,7 @@ UPLOAD_COLUMNS = [
 SAMPLE_STAGE_COLUMNS = [
     "sample text",
     "stage text",
+    "status text",
     "start_time datetime",
 ]
 

@@ -172,6 +172,7 @@ def set_status_request(sample, status, stage = "", error_text = "", stop_reason 
         write_data = {
             "sample": sample,
             "stage": stage,
+            "status": status,
             "start_time": db_time
         }
         temp_name = "%s/sample_stage_%s_%s.json" % (conf.get("db", "request_dir"), label_time, sample)
@@ -253,7 +254,7 @@ def set_status_commit(conf_file=otomo.CONFIG.DEFAULT_CONF):
         f = open(request)
         data = json.load(f)
         f.close()
-        insert_list.append((data["sample"], data["stage"], data["start_time"]))
+        insert_list.append((data["sample"], data["stage"], data["status"], data["start_time"]))
         commited_requests.append(request)
 
     if len(insert_list) > 0:
@@ -261,7 +262,7 @@ def set_status_commit(conf_file=otomo.CONFIG.DEFAULT_CONF):
         try:
             con = sqlite3.connect(db, isolation_level='EXCLUSIVE')
             cur = con.cursor()
-            cur.executemany("insert into sample_stage values (?, ?, ?)", insert_list)
+            cur.executemany("insert into sample_stage values (?, ?, ?, ?)", insert_list)
             con.commit()
         except Exception as e:
             error = e
