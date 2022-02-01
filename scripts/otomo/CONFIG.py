@@ -8,6 +8,7 @@ ANALYSIS_COLUMNS = [
     "error_text text",
     "stop_reason text",
     "size integer",
+    "note text",
 ]
 
 UPLOAD_COLUMNS = [
