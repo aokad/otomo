@@ -60,6 +60,7 @@ def main():
     analysis_parser.add_argument("--stage", metavar = "", help = "stage  name", type = str, default = "")
     analysis_parser.add_argument("--error_text", metavar = "", help = "error_text", type = str, default = "")
     analysis_parser.add_argument("--stop_reason", metavar = "", help = "stop reason", type = str, default = "")
+    analysis_parser.add_argument("--note", metavar = "", help = "memo", type = str, default = "")
     analysis_parser.add_argument("--commit", help = "multiple mode: request", action = 'store_true')
     analysis_parser.add_argument("--conf", metavar = "/path/to/otomo.conf", help = "config file", type = str, default = otomo.CONFIG.DEFAULT_CONF)
     analysis_parser.set_defaults(func = otomo.analysis_status.main)

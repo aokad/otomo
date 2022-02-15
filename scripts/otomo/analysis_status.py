@@ -130,7 +130,7 @@ def get_run_count_w_sample(sample, conf_file=otomo.CONFIG.DEFAULT_CONF):
     con.close()
     return count
 
-def set_status_request(sample, status, stage = "", error_text = "", stop_reason = "", conf_file=otomo.CONFIG.DEFAULT_CONF):
+def set_status_request(sample, status, stage = "", error_text = "", stop_reason = "", note = "", conf_file=otomo.CONFIG.DEFAULT_CONF):
     """
     analyis-DB への更新依頼を作成する
     
@@ -190,6 +190,9 @@ def set_status_request(sample, status, stage = "", error_text = "", stop_reason 
     if stop_reason != "":
         write_data["stop_reason"] = stop_reason
 
+    if note != "":
+        write_data["note"] = note
+
     temp_name = "%s/analysis_%s_%s.json" % (conf.get("db", "request_dir"), label_time, sample)
     fw = open(temp_name, "w")
     json.dump(write_data, fw)
@@ -211,8 +214,8 @@ def set_status_commit(conf_file=otomo.CONFIG.DEFAULT_CONF):
     sqls = []
     commited_requests = []
     for i,request in enumerate(requests):
-        if i >= 1000:
-            break
+        #if i >= 1000:
+        #    break
         f = open(request)
         data = json.load(f)
         f.close()
@@ -249,8 +252,8 @@ def set_status_commit(conf_file=otomo.CONFIG.DEFAULT_CONF):
     insert_list = []
     commited_requests = []
     for i,request in enumerate(requests):
-        if i >= 1000:
-            break
+        #if i >= 1000:
+        #    break
         f = open(request)
         data = json.load(f)
         f.close()
@@ -286,6 +289,7 @@ def main(args):
             stage = args.stage, 
             error_text = args.error_text, 
             stop_reason = args.stop_reason, 
+            note = args.note, 
             conf_file=args.conf
         )
     else:
