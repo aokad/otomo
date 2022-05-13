@@ -53,7 +53,7 @@ def __view_sample_stage(args):
 
     con = sqlite3.connect(db)
     cur = con.cursor()
-    cur.execute("select distinct sample,stage,start_time from sample_stage %s" % args.option)
+    cur.execute("select distinct sample,stage,status,start_time from sample_stage %s" % args.option)
 
     data = []
     header = []

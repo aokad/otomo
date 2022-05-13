@@ -67,7 +67,7 @@ def insert_samples(samples_file, conf_file=otomo.CONFIG.DEFAULT_CONF):
     if len(insert_list) > 0:
         con = sqlite3.connect(db)
         cur = con.cursor()
-        cur.executemany("insert into analysis values (?, ?, ?, ?, ?, ?, ?, ?, ?)", insert_list)
+        cur.executemany("insert into analysis values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", insert_list)
         con.commit()
         con.close()
 
