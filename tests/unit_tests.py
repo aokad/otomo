@@ -126,6 +126,7 @@ class OtomoTest(unittest.TestCase):
         os.makedirs("%s/ir_count/%s" % (output_dir, "SRP219151_SRR10015386"), exist_ok = True)
         os.makedirs("%s/iravnet/%s" % (output_dir, "SRP219151_SRR10015386"), exist_ok = True)
         os.makedirs("%s/juncmut/%s" % (output_dir, "SRP219151_SRR10015386"), exist_ok = True)
+        os.makedirs("%s/join/%s" % (output_dir, "SRP219151_SRR10015386"), exist_ok = True)
         os.makedirs("%s/log/%s" % (output_dir, "SRP219151_SRR10015386"), exist_ok = True)
         fw = open("%s/log/%s/star.e123" % (output_dir, "SRP219151_SRR10015386"), "w")
         fw.write("This Error is not STOP.\n")
@@ -137,13 +138,14 @@ class OtomoTest(unittest.TestCase):
         os.makedirs("%s/ir_count/%s" % (output_dir, "SRP219151_SRR10015396"), exist_ok = True)
         os.makedirs("%s/iravnet/%s" % (output_dir, "SRP219151_SRR10015396"), exist_ok = True)
         os.makedirs("%s/juncmut/%s" % (output_dir, "SRP219151_SRR10015396"), exist_ok = True)
+        os.makedirs("%s/join/%s" % (output_dir, "SRP219151_SRR10015396"), exist_ok = True)
         os.makedirs("%s/log/%s" % (output_dir, "SRP219151_SRR10015396"), exist_ok = True)
         fw = open("%s/log/%s/star_alignment.e123" % (output_dir, "SRP219151_SRR10015396"), "w")
         fw.write("EXITING because of FATAL ERROR in reads input: short read sequence line: \n")
         fw.close()
-
+        
         subprocess.check_call("otomo reduction", shell=True)
-
+        
         ret_sample = otomo.analysis_status.get_sample_w_status("analysis_error")
         self.assertEqual (ret_sample, ["SRP219151_SRR10015386"])
         ret_sample = otomo.analysis_status.get_sample_w_status("remove_error")
