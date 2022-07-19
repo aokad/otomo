@@ -1,4 +1,5 @@
 [![Build Status](https://api.travis-ci.com/aokad/otomo.svg?branch=master)](https://travis-ci.com/github/aokad/otomo)
+![Github Workflow](https://github.com/aokad/otomo/actions/workflows/python-package.yml/badge.svg)
 ![Python](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg)
 
 # otomo
