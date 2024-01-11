@@ -64,7 +64,7 @@ def insert_samples(samples_file, conf_file=otomo.CONFIG.DEFAULT_CONF):
             size = data[key]["size"]
         note = ""
         if "note" in data[key]:
-            size = data[key]["note"]
+            note = data[key]["note"]
 
         insert_list.append((key, study, runid, "init", "", now, "", "", size, note))
     
