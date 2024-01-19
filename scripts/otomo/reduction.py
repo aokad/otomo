@@ -98,7 +98,9 @@ def main(args):
     conf = otomo.CONFIG.load_conf(args.conf)
     stages = conf.get("reduction", "remove_dirs").split(",")
     wdir = conf.get("work", "dir")
-    extend_dir = conf.get("work", "extend_dir", None)
+    extend_dir = None
+    if conf.has_option('work', 'extend_dir')
+        extend_dir = conf.get("work", "extend_dir")
 
     samples = otomo.analysis_status.get_sample_w_status("failure")
     samples += otomo.analysis_status.get_sample_w_status("unresolv")
