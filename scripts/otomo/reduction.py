@@ -71,12 +71,14 @@ def __stop(sample, wdir):
         error = str(e)
     return (stop, error)
 
-def __remove(sample, stages, wdir):
+def __remove(sample, stages, wdir, extend_dir=None):
     error = ""
     try:
         for stage in stages:
             shutil.rmtree("%s/%s/%s" % (wdir, stage, sample))
             os.makedirs("%s/%s/%s" % (wdir, stage, sample))
+            if not extend is None:
+                shutil.rmtree("%s/%s/%s" % (extend_dir, stage, sample))
         return error
     
     except Exception as e:
@@ -96,13 +98,14 @@ def main(args):
     conf = otomo.CONFIG.load_conf(args.conf)
     stages = conf.get("reduction", "remove_dirs").split(",")
     wdir = conf.get("work", "dir")
+    extend_dir = conf.get("work", "extend_dir", None)
 
     samples = otomo.analysis_status.get_sample_w_status("failure")
     samples += otomo.analysis_status.get_sample_w_status("unresolv")
     for sample in samples:
         error_remove = ""
         if conf.getboolean("reduction", "enable"):
-            error_remove = __remove(sample, stages, wdir)
+            error_remove = __remove(sample, stages, wdir, extend_dir)
         if error_remove != "":
             otomo.analysis_status.set_status_request(sample, "remove_error", error_text=error_remove)
         else:
