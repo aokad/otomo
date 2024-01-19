@@ -99,7 +99,7 @@ def main(args):
     stages = conf.get("reduction", "remove_dirs").split(",")
     wdir = conf.get("work", "dir")
     extend_dir = None
-    if conf.has_option('work', 'extend_dir')
+    if conf.has_option('work', 'extend_dir'):
         extend_dir = conf.get("work", "extend_dir")
 
     samples = otomo.analysis_status.get_sample_w_status("failure")
